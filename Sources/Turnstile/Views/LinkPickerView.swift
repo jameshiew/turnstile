@@ -109,6 +109,7 @@ struct LinkPickerView: View {
             )
           }
           .buttonStyle(.plain)
+          .focusEffectDisabled()
           .disabled(model.isRouting || !isAvailable)
           .modifier(NumberShortcut(index: index))
           .onHover { isHovering in
