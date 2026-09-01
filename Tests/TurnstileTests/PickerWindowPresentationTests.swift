@@ -80,6 +80,21 @@ struct PickerWindowPresentationTests {
   }
 
   @Test
+  func createsSettingsOnlyWhenItsControllerIsCreated() throws {
+    let model = AppModel(
+      repository: InMemoryBrowserRepository(),
+      workspace: WorkspaceClientSpy()
+    )
+    let controller = SettingsWindowController(model: model)
+    let window = try #require(controller.window)
+
+    #expect(window.identifier == PickerWindowPresentation.settingsWindowIdentifier)
+    #expect(window.title == "Turnstile")
+    #expect(window.contentLayoutRect.size == NSSize(width: 560, height: 450))
+    #expect(!window.isVisible)
+  }
+
+  @Test
   func usesANonactivatingPanelForThePicker() throws {
     let model = AppModel(
       repository: InMemoryBrowserRepository(),

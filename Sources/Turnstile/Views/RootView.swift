@@ -25,42 +25,6 @@ struct RootView: View {
       } message: { error in
         Text(error.message)
       }
-      .onAppear {
-        configureSettingsWindow()
-      }
-  }
-
-  private func configureSettingsWindow() {
-    Task { @MainActor in
-      await Task.yield()
-      guard
-        let window = NSApplication.shared.windows.first(where: {
-          $0.identifier == PickerWindowPresentation.settingsWindowIdentifier
-        })
-          ?? NSApplication.shared.windows.first(where: {
-            $0.identifier != PickerWindowPresentation.pickerWindowIdentifier
-              && $0.canBecomeKey
-              && $0.title == "Turnstile"
-          })
-      else {
-        return
-      }
-
-      PickerWindowPresentation.configure(window, asPicker: false)
-      if model.hasPendingURLs {
-        window.orderOut(nil)
-        return
-      }
-
-      let contentSize = NSSize(width: 560, height: 450)
-      let targetFrame = window.frameRect(
-        forContentRect: NSRect(origin: .zero, size: contentSize)
-      )
-      var frame = window.frame
-      frame.size = targetFrame.size
-      frame.origin.y += window.frame.height - frame.height
-      window.setFrame(frame, display: true, animate: false)
-    }
   }
 }
 

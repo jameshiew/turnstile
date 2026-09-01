@@ -5,13 +5,17 @@ struct TurnstileApp: App {
   @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
   var body: some Scene {
-    WindowGroup("Turnstile") {
-      RootView(model: appDelegate.model)
-        .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
+    Settings {
+      EmptyView()
     }
-    .defaultSize(width: 560, height: 480)
-    .windowResizability(.contentMinSize)
     .commands {
+      CommandGroup(replacing: .appSettings) {
+        Button("Settings…") {
+          appDelegate.showSettings()
+        }
+        .keyboardShortcut(",", modifiers: .command)
+      }
+
       CommandGroup(replacing: .newItem) {}
     }
   }

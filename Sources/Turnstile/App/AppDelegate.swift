@@ -5,6 +5,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   let model: AppModel
   private var statusItem: NSStatusItem?
   private lazy var pickerWindowController = PickerWindowController(model: model)
+  private var settingsWindowController: SettingsWindowController?
 
   override init() {
     model = AppModel(
@@ -28,6 +29,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     statusItem.menu = makeStatusMenu()
     self.statusItem = statusItem
+
+    if Self.shouldShowSettingsOnLaunch(notification) {
+      showSettings()
+    }
+  }
+
+  static func shouldShowSettingsOnLaunch(_ notification: Notification) -> Bool {
+    notification.userInfo?[NSApplication.launchIsDefaultUserInfoKey] as? Bool == true
   }
 
   func application(_ application: NSApplication, open urls: [URL]) {
@@ -44,12 +53,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     model.receive(urls, preferredPickerPlacement: placement)
     guard model.hasPendingURLs else { return }
 
-    Task { @MainActor in
-      await Task.yield()
-      settingsWindow(in: application)?.orderOut(nil)
-      await Task.yield()
-      pickerWindowController.show(placement: model.preferredPickerPlacement)
-    }
+    settingsWindowController?.close()
+    pickerWindowController.show(placement: model.preferredPickerPlacement)
   }
 
   func applicationShouldHandleReopen(
@@ -59,7 +64,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     if model.hasPendingURLs {
       pickerWindowController.show(placement: model.preferredPickerPlacement)
     } else {
-      bringSettingsWindowForward(in: sender)
+      showSettings()
     }
     return true
   }
@@ -104,9 +109,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     return menu
   }
 
-  @objc private func showSettings() {
+  @objc func showSettings() {
     pickerWindowController.dismiss()
-    bringSettingsWindowForward(in: NSApplication.shared)
+    let controller = settingsWindowController ?? SettingsWindowController(model: model)
+    settingsWindowController = controller
+    controller.showWindow(nil)
+    controller.window?.makeKeyAndOrderFront(nil)
+    NSRunningApplication.current.activate(options: [.activateAllWindows])
   }
 
   @objc private func showAbout() {
@@ -118,30 +127,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     NSApplication.shared.terminate(nil)
   }
 
-  private func bringSettingsWindowForward(in application: NSApplication) {
-    let existingWindow = settingsWindow(in: application)
-    Task { @MainActor in
-      await Task.yield()
-      guard
-        let window = existingWindow
-          ?? settingsWindow(in: application)
-      else {
-        return
-      }
-
-      window.makeKeyAndOrderFront(nil)
-      NSRunningApplication.current.activate(options: [.activateAllWindows])
-    }
-  }
-
-  private func settingsWindow(in application: NSApplication) -> NSWindow? {
-    application.windows.first {
-      $0.identifier == PickerWindowPresentation.settingsWindowIdentifier
-    }
-      ?? application.windows.first {
-        $0.identifier != PickerWindowPresentation.pickerWindowIdentifier
-          && $0.canBecomeKey
-          && $0.title == "Turnstile"
-      }
-  }
 }

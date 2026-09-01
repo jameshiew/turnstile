@@ -40,4 +40,19 @@ struct ApplicationBundleTests {
     #expect(menu.items[4].keyEquivalent == "q")
     #expect(menu.items[4].keyEquivalentModifierMask == [.command])
   }
+
+  @Test
+  func opensSettingsOnlyForADefaultLaunch() {
+    let defaultLaunch = Notification(
+      name: NSApplication.didFinishLaunchingNotification,
+      userInfo: [NSApplication.launchIsDefaultUserInfoKey: true]
+    )
+    let urlLaunch = Notification(
+      name: NSApplication.didFinishLaunchingNotification,
+      userInfo: [NSApplication.launchIsDefaultUserInfoKey: false]
+    )
+
+    #expect(AppDelegate.shouldShowSettingsOnLaunch(defaultLaunch))
+    #expect(!AppDelegate.shouldShowSettingsOnLaunch(urlLaunch))
+  }
 }

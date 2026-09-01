@@ -2,6 +2,30 @@ import AppKit
 import SwiftUI
 
 @MainActor
+final class SettingsWindowController: NSWindowController {
+  init(model: AppModel) {
+    let window = NSWindow(
+      contentRect: NSRect(x: 0, y: 0, width: 560, height: 450),
+      styleMask: [.titled, .closable, .miniaturizable, .resizable],
+      backing: .buffered,
+      defer: false
+    )
+    window.title = "Turnstile"
+    window.contentViewController = NSHostingController(rootView: RootView(model: model))
+    PickerWindowPresentation.configure(window, asPicker: false)
+    window.setContentSize(NSSize(width: 560, height: 450))
+    window.center()
+
+    super.init(window: window)
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+@MainActor
 final class PickerWindowController: NSWindowController, NSWindowDelegate {
   private let model: AppModel
 
@@ -59,16 +83,6 @@ final class PickerWindowController: NSWindowController, NSWindowDelegate {
 
   func windowDidResignKey(_ notification: Notification) {
     guard model.hasPendingURLs, !model.isRouting else { return }
-
-    if let keyWindow = NSApplication.shared.keyWindow,
-      keyWindow.identifier == PickerWindowPresentation.settingsWindowIdentifier
-        || keyWindow.title == "Turnstile"
-    {
-      keyWindow.orderOut(nil)
-      show(placement: model.preferredPickerPlacement)
-      return
-    }
-
     dismiss()
   }
 
