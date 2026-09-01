@@ -62,6 +62,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let frame = PickerWindowPresentation.anchoredFrame(
           for: window,
           contentSize: contentSize,
+          browserCount: model.browsers.browsers.count,
           placement: placement
         )
         window.setFrame(frame, display: false)

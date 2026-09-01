@@ -66,6 +66,7 @@ struct RootView: View {
       if model.hasPendingURLs, let placement = preferredPickerPlacement(for: window) {
         frame.origin = PickerWindowPresentation.anchoredOrigin(
           windowSize: frame.size,
+          browserCount: model.browsers.browsers.count,
           placement: placement
         )
       } else {
@@ -101,6 +102,18 @@ struct RootView: View {
 
 @MainActor
 enum PickerWindowPresentation {
+  static let outerPadding: CGFloat = 1
+  static let contentPadding: CGFloat = 14
+  static let browserChoiceWidth: CGFloat = 88
+  static let browserChoiceHeight: CGFloat = 78
+  static let browserChoiceSpacing: CGFloat = 8
+  static let browserIconSize: CGFloat = 48
+  static let browserChoicesTopPadding: CGFloat = 10
+
+  static var panelContentInset: CGFloat {
+    outerPadding + contentPadding
+  }
+
   static func size(browserCount: Int) -> NSSize {
     let visibleBrowserCount = min(max(browserCount, 1), 5)
     let width = min(520, max(320, CGFloat(visibleBrowserCount * 94 + 28)))
@@ -110,6 +123,7 @@ enum PickerWindowPresentation {
   static func anchoredFrame(
     for window: NSWindow,
     contentSize: NSSize,
+    browserCount: Int,
     placement: PickerPlacement
   ) -> NSRect {
     let targetFrame = window.frameRect(
@@ -117,12 +131,17 @@ enum PickerWindowPresentation {
     )
     var frame = window.frame
     frame.size = targetFrame.size
-    frame.origin = anchoredOrigin(windowSize: frame.size, placement: placement)
+    frame.origin = anchoredOrigin(
+      windowSize: frame.size,
+      browserCount: browserCount,
+      placement: placement
+    )
     return frame
   }
 
   static func anchoredOrigin(
     windowSize: NSSize,
+    browserCount: Int,
     placement: PickerPlacement
   ) -> NSPoint {
     let gap: CGFloat = 12
@@ -132,23 +151,49 @@ enum PickerWindowPresentation {
       dy: screenPadding
     )
     let anchor = placement.anchor
+    let preferredOrigin: NSPoint
+
+    if browserCount > 0 {
+      let iconCenter = firstBrowserIconCenter(
+        windowSize: windowSize,
+        browserCount: browserCount
+      )
+      preferredOrigin = NSPoint(
+        x: anchor.x - iconCenter.x,
+        y: anchor.y - iconCenter.y
+      )
+    } else {
+      preferredOrigin = NSPoint(
+        x: anchor.x - windowSize.width / 2,
+        y: anchor.y - gap - windowSize.height
+      )
+    }
 
     let maximumX = max(availableFrame.minX, availableFrame.maxX - windowSize.width)
-    let x = min(
-      max(anchor.x - windowSize.width / 2, availableFrame.minX),
-      maximumX
-    )
-
-    let originBelowAnchor = anchor.y - gap - windowSize.height
-    let originAboveAnchor = anchor.y + gap
-    let preferredY =
-      originBelowAnchor >= availableFrame.minY
-      ? originBelowAnchor
-      : originAboveAnchor
     let maximumY = max(availableFrame.minY, availableFrame.maxY - windowSize.height)
-    let y = min(max(preferredY, availableFrame.minY), maximumY)
+    let x = min(max(preferredOrigin.x, availableFrame.minX), maximumX)
+    let y = min(max(preferredOrigin.y, availableFrame.minY), maximumY)
 
     return NSPoint(x: x, y: y)
+  }
+
+  static func firstBrowserIconCenter(
+    windowSize: NSSize,
+    browserCount: Int
+  ) -> NSPoint {
+    let rowWidth = windowSize.width - 2 * panelContentInset
+    let choiceCount = max(browserCount, 1)
+    let choicesWidth =
+      CGFloat(choiceCount) * browserChoiceWidth
+      + CGFloat(choiceCount - 1) * browserChoiceSpacing
+    let leadingSpace = max(0, (rowWidth - choicesWidth) / 2)
+    let x = panelContentInset + leadingSpace + browserChoiceWidth / 2
+    let distanceFromTop =
+      panelContentInset
+      + browserChoicesTopPadding
+      + browserIconSize / 2
+
+    return NSPoint(x: x, y: windowSize.height - distanceFromTop)
   }
 
   static func configure(_ window: NSWindow, asPicker: Bool) {

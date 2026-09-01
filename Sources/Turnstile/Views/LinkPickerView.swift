@@ -7,11 +7,6 @@ struct LinkPickerView: View {
 
   var body: some View {
     VStack(spacing: 0) {
-      linkSummary
-
-      Divider()
-        .padding(.vertical, 10)
-
       if model.browsers.browsers.isEmpty {
         emptyState
       } else {
@@ -19,15 +14,21 @@ struct LinkPickerView: View {
       }
 
       keyboardHint
-        .padding(.top, 9)
+        .padding(.top, 5)
+
+      Divider()
+        .padding(.vertical, 8)
+
+      linkSummary
     }
-    .padding(14)
+    .padding(PickerWindowPresentation.contentPadding)
+    .frame(maxHeight: .infinity, alignment: .top)
     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
     .overlay {
       RoundedRectangle(cornerRadius: 18, style: .continuous)
         .stroke(.separator.opacity(0.7), lineWidth: 0.5)
     }
-    .padding(1)
+    .padding(PickerWindowPresentation.outerPadding)
     .onKeyPress(.return) {
       guard let firstBrowser = model.browsers.browsers.first,
         !model.isRouting
@@ -89,7 +90,7 @@ struct LinkPickerView: View {
 
   private var browserChoices: some View {
     ScrollView(.horizontal) {
-      LazyHStack(spacing: 8) {
+      LazyHStack(spacing: PickerWindowPresentation.browserChoiceSpacing) {
         ForEach(Array(model.browsers.browsers.enumerated()), id: \.element.id) { entry in
           let index = entry.offset
           let browser = entry.element
@@ -119,7 +120,8 @@ struct LinkPickerView: View {
       .frame(minWidth: minimumChoiceRowWidth)
     }
     .scrollIndicators(.hidden)
-    .frame(height: 78)
+    .frame(height: PickerWindowPresentation.browserChoiceHeight)
+    .padding(.top, PickerWindowPresentation.browserChoicesTopPadding)
     .overlay {
       if model.isRouting {
         ProgressView()
@@ -148,7 +150,10 @@ struct LinkPickerView: View {
       .controlSize(.small)
       .disabled(model.isAddingBrowser)
     }
-    .frame(height: 78)
+    .frame(
+      height: PickerWindowPresentation.browserChoiceHeight
+        + PickerWindowPresentation.browserChoicesTopPadding
+    )
   }
 
   private var keyboardHint: some View {
@@ -167,7 +172,8 @@ struct LinkPickerView: View {
   }
 
   private var minimumChoiceRowWidth: CGFloat {
-    PickerWindowPresentation.size(browserCount: model.browsers.browsers.count).width - 30
+    PickerWindowPresentation.size(browserCount: model.browsers.browsers.count).width
+      - 2 * PickerWindowPresentation.panelContentInset
   }
 
   private var title: String {
@@ -203,7 +209,10 @@ private struct BrowserChoice: View {
         Image(nsImage: icon)
           .resizable()
           .scaledToFit()
-          .frame(width: 40, height: 40)
+          .frame(
+            width: PickerWindowPresentation.browserIconSize,
+            height: PickerWindowPresentation.browserIconSize
+          )
 
         if let shortcut {
           Text("\(shortcut)")
@@ -220,7 +229,11 @@ private struct BrowserChoice: View {
         .lineLimit(1)
         .truncationMode(.tail)
     }
-    .frame(width: 78, height: 70)
+    .frame(
+      width: PickerWindowPresentation.browserChoiceWidth,
+      height: PickerWindowPresentation.browserChoiceHeight,
+      alignment: .top
+    )
     .background(
       isHighlighted ? Color.accentColor.opacity(0.12) : Color.clear,
       in: RoundedRectangle(cornerRadius: 12, style: .continuous)

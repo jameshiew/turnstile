@@ -9,41 +9,50 @@ struct PickerWindowPresentationTests {
   private let windowSize = NSSize(width: 320, height: 190)
 
   @Test
-  func positionsPickerBelowAndCenteredOnAnchor() {
-    let origin = PickerWindowPresentation.anchoredOrigin(
-      windowSize: windowSize,
-      placement: PickerPlacement(
-        anchor: NSPoint(x: 500, y: 600),
-        visibleScreenFrame: screenFrame
+  func positionsFirstBrowserIconCenterOnAnchor() {
+    let anchor = NSPoint(x: 500, y: 600)
+    for browserCount in [1, 2, 3, 5, 6] {
+      let size = PickerWindowPresentation.size(browserCount: browserCount)
+      let origin = PickerWindowPresentation.anchoredOrigin(
+        windowSize: size,
+        browserCount: browserCount,
+        placement: PickerPlacement(
+          anchor: anchor,
+          visibleScreenFrame: screenFrame
+        )
       )
-    )
+      let iconCenter = PickerWindowPresentation.firstBrowserIconCenter(
+        windowSize: size,
+        browserCount: browserCount
+      )
 
-    #expect(origin == NSPoint(x: 340, y: 398))
+      #expect(origin.x + iconCenter.x == anchor.x)
+      #expect(origin.y + iconCenter.y == anchor.y)
+    }
   }
 
   @Test
-  func positionsPickerAboveAnchorWhenThereIsNoRoomBelow() {
-    let origin = PickerWindowPresentation.anchoredOrigin(
+  func centersSingleBrowserInPicker() {
+    let iconCenter = PickerWindowPresentation.firstBrowserIconCenter(
       windowSize: windowSize,
-      placement: PickerPlacement(
-        anchor: NSPoint(x: 500, y: 100),
-        visibleScreenFrame: screenFrame
-      )
+      browserCount: 1
     )
 
-    #expect(origin == NSPoint(x: 340, y: 112))
+    #expect(iconCenter.x == windowSize.width / 2)
+    #expect(iconCenter.y == 141)
   }
 
   @Test
   func keepsPickerInsideVisibleScreenEdges() {
     let origin = PickerWindowPresentation.anchoredOrigin(
       windowSize: windowSize,
+      browserCount: 2,
       placement: PickerPlacement(
         anchor: NSPoint(x: 10, y: 790),
         visibleScreenFrame: screenFrame
       )
     )
 
-    #expect(origin == NSPoint(x: 8, y: 588))
+    #expect(origin == NSPoint(x: 8, y: 602))
   }
 }
