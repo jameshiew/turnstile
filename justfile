@@ -14,6 +14,15 @@ lint:
 build: generate
     xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Debug -derivedDataPath .build/DerivedData build
 
+build-release: generate
+    xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Release -derivedDataPath .build/DerivedData build
+
+run: build
+    open .build/DerivedData/Build/Products/Debug/Turnstile.app
+
+run-release: build-release
+    open .build/DerivedData/Build/Products/Release/Turnstile.app
+
 test: generate
     xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Debug -derivedDataPath .build/DerivedData test
 
