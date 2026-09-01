@@ -56,6 +56,7 @@ final class AppModel {
   let browsers: BrowserLibrary
 
   private(set) var pendingURLs: [URL] = []
+  private(set) var preferredPickerScreenFrame: NSRect?
   private(set) var isAddingBrowser = false
   private(set) var isRouting = false
   private(set) var isSettingDefaultBrowser = false
@@ -85,8 +86,12 @@ final class AppModel {
     !pendingURLs.isEmpty
   }
 
-  func receive(_ urls: [URL]) {
-    pendingURLs.append(contentsOf: urls.filter(\.isRoutableWebURL))
+  func receive(_ urls: [URL], preferredScreenFrame: NSRect? = nil) {
+    let routableURLs = urls.filter(\.isRoutableWebURL)
+    guard !routableURLs.isEmpty else { return }
+
+    pendingURLs.append(contentsOf: routableURLs)
+    preferredPickerScreenFrame = preferredScreenFrame
   }
 
   func addBrowser() async {
@@ -140,6 +145,9 @@ final class AppModel {
     do {
       try await workspace.open(urls, in: browser)
       pendingURLs.removeFirst(min(urls.count, pendingURLs.count))
+      if pendingURLs.isEmpty {
+        preferredPickerScreenFrame = nil
+      }
       return true
     } catch {
       present(error, title: "Link Could Not Be Opened")
@@ -150,6 +158,7 @@ final class AppModel {
   func cancelRouting() {
     guard !isRouting else { return }
     pendingURLs.removeAll()
+    preferredPickerScreenFrame = nil
   }
 
   func setAsDefaultBrowser() async {

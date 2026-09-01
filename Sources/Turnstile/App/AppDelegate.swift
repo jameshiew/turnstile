@@ -13,7 +13,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func application(_ application: NSApplication, open urls: [URL]) {
-    model.receive(urls)
+    let mouseLocation = NSEvent.mouseLocation
+    let preferredScreen = NSScreen.screens.first {
+      NSMouseInRect(mouseLocation, $0.frame, false)
+    }
+    model.receive(urls, preferredScreenFrame: preferredScreen?.visibleFrame)
     bringWindowForward(in: application)
   }
 
@@ -30,11 +34,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func bringWindowForward(in application: NSApplication) {
-    NSRunningApplication.current.activate(options: [.activateAllWindows])
-
     Task { @MainActor in
       await Task.yield()
-      application.windows.first(where: \.canBecomeKey)?.makeKeyAndOrderFront(nil)
+      guard let window = application.windows.first(where: \.canBecomeKey) else { return }
+
+      if model.hasPendingURLs, let screenFrame = model.preferredPickerScreenFrame {
+        window.orderOut(nil)
+        PickerWindowPresentation.configure(window, asPicker: true)
+        let contentSize = PickerWindowPresentation.size(
+          browserCount: model.browsers.browsers.count
+        )
+        let frame = PickerWindowPresentation.centeredFrame(
+          for: window,
+          contentSize: contentSize,
+          in: screenFrame
+        )
+        window.setFrame(frame, display: false)
+        await Task.yield()
+      }
+
+      window.makeKeyAndOrderFront(nil)
+      NSRunningApplication.current.activate(options: [.activateAllWindows])
     }
   }
 }

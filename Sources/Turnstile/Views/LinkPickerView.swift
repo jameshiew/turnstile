@@ -3,10 +3,14 @@ import SwiftUI
 
 struct LinkPickerView: View {
   @Bindable var model: AppModel
+  @State private var hoveredBrowserID: Browser.ID?
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 20) {
+    VStack(spacing: 0) {
       linkSummary
+
+      Divider()
+        .padding(.vertical, 10)
 
       if model.browsers.browsers.isEmpty {
         emptyState
@@ -14,19 +18,16 @@ struct LinkPickerView: View {
         browserChoices
       }
 
-      HStack {
-        Text("Browsers appear in the order set in Turnstile.")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-        Spacer()
-        Button("Cancel", role: .cancel) {
-          cancel()
-        }
-        .keyboardShortcut(.cancelAction)
-        .disabled(model.isRouting)
-      }
+      keyboardHint
+        .padding(.top, 9)
     }
-    .padding(24)
+    .padding(14)
+    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .overlay {
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .stroke(.separator.opacity(0.7), lineWidth: 0.5)
+    }
+    .padding(1)
     .onKeyPress(.return) {
       guard let firstBrowser = model.browsers.browsers.first,
         !model.isRouting
@@ -39,102 +40,134 @@ struct LinkPickerView: View {
   }
 
   private var linkSummary: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      HStack(spacing: 10) {
-        Image(systemName: "link")
-          .font(.title2.weight(.semibold))
-          .foregroundStyle(.tint)
+    HStack(spacing: 10) {
+      Image(systemName: "link")
+        .font(.system(size: 13, weight: .semibold))
+        .foregroundStyle(.tint)
+        .frame(width: 30, height: 30)
+        .background(.tint.opacity(0.12), in: Circle())
 
-        Text(title)
-          .font(.title2.weight(.semibold))
+      VStack(alignment: .leading, spacing: 1) {
+        HStack(spacing: 6) {
+          Text(title)
+            .font(.subheadline.weight(.semibold))
+            .lineLimit(1)
 
-        if model.pendingURLs.count > 1 {
-          Text("\(model.pendingURLs.count) links")
-            .font(.caption.weight(.medium))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(.quaternary, in: Capsule())
+          if model.pendingURLs.count > 1 {
+            Text("\(model.pendingURLs.count)")
+              .font(.caption2.monospacedDigit().weight(.medium))
+              .foregroundStyle(.secondary)
+              .padding(.horizontal, 5)
+              .padding(.vertical, 1)
+              .background(.quaternary, in: Capsule())
+          }
         }
+
+        Text(model.pendingURLs.first?.absoluteString ?? "")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .lineLimit(1)
+          .truncationMode(.middle)
       }
 
-      Text(model.pendingURLs.first?.absoluteString ?? "")
-        .font(.callout.monospaced())
-        .foregroundStyle(.secondary)
-        .lineLimit(2)
-        .truncationMode(.middle)
-        .textSelection(.enabled)
+      Spacer(minLength: 4)
+
+      Button {
+        cancel()
+      } label: {
+        Image(systemName: "xmark")
+          .font(.system(size: 10, weight: .semibold))
+          .frame(width: 24, height: 24)
+          .background(.quaternary, in: Circle())
+      }
+      .buttonStyle(.plain)
+      .keyboardShortcut(.cancelAction)
+      .help("Cancel")
+      .disabled(model.isRouting)
     }
   }
 
   private var browserChoices: some View {
-    ScrollView {
-      LazyVStack(spacing: 8) {
+    ScrollView(.horizontal) {
+      LazyHStack(spacing: 8) {
         ForEach(Array(model.browsers.browsers.enumerated()), id: \.element.id) { entry in
           let index = entry.offset
           let browser = entry.element
+          let isAvailable = model.isAvailable(browser)
+
           Button {
             route(to: browser)
           } label: {
-            HStack(spacing: 12) {
-              Image(nsImage: model.icon(for: browser))
-                .resizable()
-                .scaledToFit()
-                .frame(width: 34, height: 34)
-
-              Text(browser.displayName)
-                .font(.body.weight(.medium))
-
-              Spacer()
-
-              if !model.isAvailable(browser) {
-                Text("Not Found")
-                  .font(.caption)
-                  .foregroundStyle(.orange)
-              } else if index < 9 {
-                Text("\(index + 1)")
-                  .font(.caption.monospacedDigit())
-                  .foregroundStyle(.secondary)
-                  .padding(.horizontal, 7)
-                  .padding(.vertical, 3)
-                  .background(.quaternary, in: RoundedRectangle(cornerRadius: 5))
-              }
-            }
-            .padding(10)
-            .contentShape(Rectangle())
+            BrowserChoice(
+              browser: browser,
+              icon: model.icon(for: browser),
+              shortcut: index < 9 ? index + 1 : nil,
+              isAvailable: isAvailable,
+              isHighlighted: hoveredBrowserID == browser.id
+                || (hoveredBrowserID == nil && index == 0)
+            )
           }
           .buttonStyle(.plain)
-          .background(.quinary, in: RoundedRectangle(cornerRadius: 10))
-          .overlay {
-            RoundedRectangle(cornerRadius: 10)
-              .stroke(.separator, lineWidth: 0.5)
-          }
-          .disabled(model.isRouting || !model.isAvailable(browser))
+          .disabled(model.isRouting || !isAvailable)
           .modifier(NumberShortcut(index: index))
+          .onHover { isHovering in
+            hoveredBrowserID = isHovering ? browser.id : nil
+          }
+          .accessibilityLabel("Open in \(browser.displayName)")
         }
       }
+      .frame(minWidth: minimumChoiceRowWidth)
     }
-    .frame(minHeight: 190)
+    .scrollIndicators(.hidden)
+    .frame(height: 78)
     .overlay {
       if model.isRouting {
-        ProgressView("Opening…")
-          .padding(14)
-          .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        ProgressView()
+          .controlSize(.small)
+          .padding(10)
+          .background(.regularMaterial, in: Circle())
       }
     }
   }
 
   private var emptyState: some View {
-    ContentUnavailableView {
-      Label("No Browsers", systemImage: "globe")
-    } description: {
+    HStack(spacing: 10) {
+      Image(systemName: "globe")
+        .font(.title3)
+        .foregroundStyle(.secondary)
+
       Text("Add a browser before routing this link.")
-    } actions: {
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      Spacer()
+
       Button("Add Browser…") {
         Task { await model.addBrowser() }
       }
+      .controlSize(.small)
       .disabled(model.isAddingBrowser)
     }
-    .frame(maxWidth: .infinity, minHeight: 220)
+    .frame(height: 78)
+  }
+
+  private var keyboardHint: some View {
+    Group {
+      if let firstBrowser = model.browsers.browsers.first {
+        Text("Return: \(firstBrowser.displayName)  •  Numbers: choose  •  Esc: close")
+      } else {
+        Text("Esc: close")
+      }
+    }
+    .font(.caption2)
+    .foregroundStyle(.tertiary)
+    .lineLimit(1)
+    .minimumScaleFactor(0.8)
+    .frame(maxWidth: .infinity, alignment: .center)
+  }
+
+  private var minimumChoiceRowWidth: CGFloat {
+    PickerWindowPresentation.size(browserCount: model.browsers.browsers.count).width - 30
   }
 
   private var title: String {
@@ -154,6 +187,60 @@ struct LinkPickerView: View {
   private func cancel() {
     model.cancelRouting()
     NSApplication.shared.terminate(nil)
+  }
+}
+
+private struct BrowserChoice: View {
+  let browser: Browser
+  let icon: NSImage
+  let shortcut: Int?
+  let isAvailable: Bool
+  let isHighlighted: Bool
+
+  var body: some View {
+    VStack(spacing: 4) {
+      ZStack(alignment: .topTrailing) {
+        Image(nsImage: icon)
+          .resizable()
+          .scaledToFit()
+          .frame(width: 40, height: 40)
+
+        if let shortcut {
+          Text("\(shortcut)")
+            .font(.system(size: 9, weight: .medium, design: .rounded))
+            .foregroundStyle(.secondary)
+            .frame(width: 16, height: 16)
+            .background(.regularMaterial, in: Circle())
+            .offset(x: 6, y: -4)
+        }
+      }
+
+      Text(browser.displayName)
+        .font(.caption)
+        .lineLimit(1)
+        .truncationMode(.tail)
+    }
+    .frame(width: 78, height: 70)
+    .background(
+      isHighlighted ? Color.accentColor.opacity(0.12) : Color.clear,
+      in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+    )
+    .overlay {
+      RoundedRectangle(cornerRadius: 12, style: .continuous)
+        .stroke(
+          isHighlighted ? Color.accentColor.opacity(0.45) : Color.clear,
+          lineWidth: 1
+        )
+    }
+    .opacity(isAvailable ? 1 : 0.45)
+    .overlay(alignment: .topLeading) {
+      if !isAvailable {
+        Image(systemName: "exclamationmark.triangle.fill")
+          .font(.caption2)
+          .foregroundStyle(.orange)
+          .padding(5)
+      }
+    }
   }
 }
 
