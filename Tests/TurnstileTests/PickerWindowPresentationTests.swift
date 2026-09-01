@@ -55,4 +55,14 @@ struct PickerWindowPresentationTests {
 
     #expect(origin == NSPoint(x: 8, y: 602))
   }
+
+  @Test
+  func retainsConfiguredWindowAfterItCloses() {
+    let window = NSWindow()
+
+    PickerWindowPresentation.configure(window, asPicker: false)
+
+    #expect(window.identifier == PickerWindowPresentation.windowIdentifier)
+    #expect(!window.isReleasedWhenClosed)
+  }
 }

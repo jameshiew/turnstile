@@ -102,6 +102,7 @@ struct RootView: View {
 
 @MainActor
 enum PickerWindowPresentation {
+  static let windowIdentifier = NSUserInterfaceItemIdentifier("TurnstileMainWindow")
   static let outerPadding: CGFloat = 1
   static let contentPadding: CGFloat = 14
   static let browserChoiceWidth: CGFloat = 88
@@ -197,6 +198,8 @@ enum PickerWindowPresentation {
   }
 
   static func configure(_ window: NSWindow, asPicker: Bool) {
+    window.identifier = windowIdentifier
+    window.isReleasedWhenClosed = false
     window.tabbingMode = .disallowed
 
     if asPicker {

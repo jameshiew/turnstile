@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import Testing
 
 @testable import Turnstile
@@ -16,5 +16,28 @@ struct ApplicationBundleTests {
     )
 
     #expect(schemes.isSuperset(of: ["http", "https"]))
+  }
+
+  @Test
+  func staysRunningAfterItsLastWindowCloses() {
+    let delegate = AppDelegate()
+
+    #expect(!delegate.applicationShouldTerminateAfterLastWindowClosed(.shared))
+  }
+
+  @Test
+  func statusMenuContainsApplicationCommands() {
+    let menu = AppDelegate().makeStatusMenu()
+
+    #expect(menu.items.count == 5)
+    #expect(menu.items[0].title == "Settings…")
+    #expect(menu.items[0].keyEquivalent == ",")
+    #expect(menu.items[0].keyEquivalentModifierMask == [.command])
+    #expect(menu.items[1].isSeparatorItem)
+    #expect(menu.items[2].title == "About Turnstile")
+    #expect(menu.items[3].isSeparatorItem)
+    #expect(menu.items[4].title == "Quit Turnstile")
+    #expect(menu.items[4].keyEquivalent == "q")
+    #expect(menu.items[4].keyEquivalentModifierMask == [.command])
   }
 }

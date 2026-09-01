@@ -185,14 +185,20 @@ struct LinkPickerView: View {
     Task {
       let didOpen = await model.routePendingURLs(to: browser)
       if didOpen, !model.hasPendingURLs {
-        NSApplication.shared.terminate(nil)
+        hidePicker()
       }
     }
   }
 
   private func cancel() {
     model.cancelRouting()
-    NSApplication.shared.terminate(nil)
+    hidePicker()
+  }
+
+  private func hidePicker() {
+    NSApplication.shared.windows
+      .first(where: { $0.identifier == PickerWindowPresentation.windowIdentifier })?
+      .orderOut(nil)
   }
 }
 
