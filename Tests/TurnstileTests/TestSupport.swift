@@ -52,6 +52,7 @@ final class WorkspaceClientSpy: WorkspaceClient {
   var openError: (any Error)?
   var defaultBrowser = false
   var makeDefaultError: (any Error)?
+  var becomesDefaultBeforeMakeDefaultError = false
   var availableBrowserIDs = Set<Browser.ID>()
 
   func chooseBrowser() async -> URL? {
@@ -80,6 +81,7 @@ final class WorkspaceClientSpy: WorkspaceClient {
 
   func makeDefaultBrowser() async throws {
     if let makeDefaultError {
+      defaultBrowser = becomesDefaultBeforeMakeDefaultError
       throw makeDefaultError
     }
     defaultBrowser = true

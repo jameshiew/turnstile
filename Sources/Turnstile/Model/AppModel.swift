@@ -178,7 +178,10 @@ final class AppModel {
       try await workspace.makeDefaultBrowser()
       refreshDefaultBrowserStatus()
     } catch {
-      present(error, title: "Default Browser Could Not Be Changed")
+      refreshDefaultBrowserStatus()
+      if !isDefaultBrowser {
+        present(error, title: "Default Browser Could Not Be Changed")
+      }
     }
   }
 

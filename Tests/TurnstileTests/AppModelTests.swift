@@ -95,4 +95,33 @@ struct AppModelTests {
     #expect(workspace.defaultBrowser)
     #expect(model.isDefaultBrowser)
   }
+
+  @Test
+  func acceptsReportedFailureWhenDefaultBrowserChanged() async {
+    let browser = makeBrowser(name: "Safari")
+    let repository = InMemoryBrowserRepository(browsers: [browser])
+    let workspace = WorkspaceClientSpy()
+    workspace.makeDefaultError = TestFailure.expected
+    workspace.becomesDefaultBeforeMakeDefaultError = true
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.setAsDefaultBrowser()
+
+    #expect(model.isDefaultBrowser)
+    #expect(model.presentedError == nil)
+  }
+
+  @Test
+  func reportsFailureWhenDefaultBrowserDidNotChange() async {
+    let browser = makeBrowser(name: "Safari")
+    let repository = InMemoryBrowserRepository(browsers: [browser])
+    let workspace = WorkspaceClientSpy()
+    workspace.makeDefaultError = TestFailure.expected
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.setAsDefaultBrowser()
+
+    #expect(!model.isDefaultBrowser)
+    #expect(model.presentedError?.title == "Default Browser Could Not Be Changed")
+  }
 }
