@@ -105,11 +105,13 @@ enum PickerWindowPresentation {
   static let windowIdentifier = NSUserInterfaceItemIdentifier("TurnstileMainWindow")
   static let outerPadding: CGFloat = 1
   static let contentPadding: CGFloat = 14
-  static let browserChoiceWidth: CGFloat = 88
-  static let browserChoiceHeight: CGFloat = 78
-  static let browserChoiceSpacing: CGFloat = 8
-  static let browserIconSize: CGFloat = 48
-  static let browserChoicesTopPadding: CGFloat = 10
+  static let browserChoiceWidth: CGFloat = 112
+  static let browserChoiceHeight: CGFloat = 88
+  static let browserChoiceSpacing: CGFloat = 10
+  static let browserIconSize: CGFloat = 56
+  static let browserChoicesTopPadding: CGFloat = 8
+  static let shortcutBadgeSize: CGFloat = 20
+  static let shortcutBadgeInset: CGFloat = 6
 
   static var panelContentInset: CGFloat {
     outerPadding + contentPadding
@@ -117,8 +119,11 @@ enum PickerWindowPresentation {
 
   static func size(browserCount: Int) -> NSSize {
     let visibleBrowserCount = min(max(browserCount, 1), 5)
-    let width = min(520, max(320, CGFloat(visibleBrowserCount * 94 + 28)))
-    return NSSize(width: width, height: 190)
+    let choicesWidth =
+      CGFloat(visibleBrowserCount) * browserChoiceWidth
+      + CGFloat(visibleBrowserCount - 1) * browserChoiceSpacing
+    let width = min(520, max(320, choicesWidth + 2 * panelContentInset))
+    return NSSize(width: width, height: 200)
   }
 
   static func anchoredFrame(

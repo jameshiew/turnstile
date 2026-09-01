@@ -210,25 +210,15 @@ private struct BrowserChoice: View {
   let isHighlighted: Bool
 
   var body: some View {
-    VStack(spacing: 4) {
-      ZStack(alignment: .topTrailing) {
-        Image(nsImage: icon)
-          .resizable()
-          .scaledToFit()
-          .frame(
-            width: PickerWindowPresentation.browserIconSize,
-            height: PickerWindowPresentation.browserIconSize
-          )
-
-        if let shortcut {
-          Text("\(shortcut)")
-            .font(.system(size: 9, weight: .medium, design: .rounded))
-            .foregroundStyle(.secondary)
-            .frame(width: 16, height: 16)
-            .background(.regularMaterial, in: Circle())
-            .offset(x: 6, y: -4)
-        }
-      }
+    VStack(spacing: 5) {
+      Image(nsImage: icon)
+        .resizable()
+        .scaledToFit()
+        .frame(
+          width: PickerWindowPresentation.browserIconSize,
+          height: PickerWindowPresentation.browserIconSize
+        )
+        .shadow(color: .black.opacity(0.12), radius: 2, y: 1)
 
       Text(browser.displayName)
         .font(.caption)
@@ -241,15 +231,36 @@ private struct BrowserChoice: View {
       alignment: .top
     )
     .background(
-      isHighlighted ? Color.accentColor.opacity(0.12) : Color.clear,
-      in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+      isHighlighted ? Color.accentColor.opacity(0.1) : Color.clear,
+      in: RoundedRectangle(cornerRadius: 14, style: .continuous)
     )
     .overlay {
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
+      RoundedRectangle(cornerRadius: 14, style: .continuous)
         .stroke(
-          isHighlighted ? Color.accentColor.opacity(0.45) : Color.clear,
+          isHighlighted ? Color.accentColor.opacity(0.5) : Color.clear,
           lineWidth: 1
         )
+    }
+    .overlay(alignment: .topTrailing) {
+      if let shortcut {
+        Text("\(shortcut)")
+          .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
+          .foregroundStyle(.primary)
+          .frame(
+            width: PickerWindowPresentation.shortcutBadgeSize,
+            height: PickerWindowPresentation.shortcutBadgeSize
+          )
+          .background(
+            .regularMaterial,
+            in: RoundedRectangle(cornerRadius: 6, style: .continuous)
+          )
+          .overlay {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+              .stroke(.separator.opacity(0.65), lineWidth: 0.5)
+          }
+          .shadow(color: .black.opacity(0.1), radius: 1.5, y: 1)
+          .padding(PickerWindowPresentation.shortcutBadgeInset)
+      }
     }
     .opacity(isAvailable ? 1 : 0.45)
     .overlay(alignment: .topLeading) {

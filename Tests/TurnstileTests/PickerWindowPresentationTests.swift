@@ -39,7 +39,20 @@ struct PickerWindowPresentationTests {
     )
 
     #expect(iconCenter.x == windowSize.width / 2)
-    #expect(iconCenter.y == 141)
+    #expect(iconCenter.y == 139)
+  }
+
+  @Test
+  func keepsNumberShortcutClearOfBrowserIcon() {
+    let iconTrailingEdge =
+      PickerWindowPresentation.browserChoiceWidth / 2
+      + PickerWindowPresentation.browserIconSize / 2
+    let shortcutLeadingEdge =
+      PickerWindowPresentation.browserChoiceWidth
+      - PickerWindowPresentation.shortcutBadgeInset
+      - PickerWindowPresentation.shortcutBadgeSize
+
+    #expect(iconTrailingEdge < shortcutLeadingEdge)
   }
 
   @Test
