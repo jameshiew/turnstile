@@ -1,0 +1,514 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0744B6069A80F31D193FCB23 /* BrowserRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B448CAD9CA6EAAA6B0D11A1C /* BrowserRepositoryTests.swift */; };
+		121ECCA1B4E56969F3D89769 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E3EC88E1AA1E401BDA1038 /* TestSupport.swift */; };
+		1780AF795849AF5C11D7FD7B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B721687A736D1CC9145FB5F0 /* Assets.xcassets */; };
+		1B040A7B58A13915252D5C94 /* BrowserCollectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA17B8F02D0370E4EF036A6 /* BrowserCollectionTests.swift */; };
+		5DFD73800FF679595728C503 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF31D039FD8DCAC28C42FEE /* AppModel.swift */; };
+		62474CE421E1BCEEF1AB1DBE /* BrowserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74C4959FDA024F4017B4691 /* BrowserRepository.swift */; };
+		7791D79D7FDD25E86403E868 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981E5A49B731707B24DEB37D /* AppModelTests.swift */; };
+		8A07D6D2B6ECE75641CEA25E /* TurnstileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D971A63ACE27FDA84E6F92A /* TurnstileApp.swift */; };
+		8EF6A100632772B47E226786 /* WorkspaceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2324FC24668E90667982E96 /* WorkspaceClient.swift */; };
+		9A922DB6CA81CCD9100A1595 /* LinkPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EA19FB814819AF0F9D756 /* LinkPickerView.swift */; };
+		B8BF6506AD0B9BB0DA64BC2E /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4495CE5A69000C0B6FFB91D7 /* Browser.swift */; };
+		C7F78B3A009F114B1266D0A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CB0CD69EACB487E039B894 /* AppDelegate.swift */; };
+		DCF73A2E331040698FA4FDDA /* ApplicationBundleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */; };
+		EF09F19A44B8B0DE6B6F1903 /* BrowserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E17FA9AB3BBBDF573FCD6EC /* BrowserSettingsView.swift */; };
+		FA18EF376FD9ECC45D9496F8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4189B4C86B3AE848C46EE408 /* RootView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		50AE48000A730B1074BDF9F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FDFC780AC0A3E850EE0D2AE4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 00C27BF1C58BE3D0B6AF9F72;
+			remoteInfo = Turnstile;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0AA17B8F02D0370E4EF036A6 /* BrowserCollectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserCollectionTests.swift; sourceTree = "<group>"; };
+		152EA19FB814819AF0F9D756 /* LinkPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPickerView.swift; sourceTree = "<group>"; };
+		2E17FA9AB3BBBDF573FCD6EC /* BrowserSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserSettingsView.swift; sourceTree = "<group>"; };
+		2FF31D039FD8DCAC28C42FEE /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationBundleTests.swift; sourceTree = "<group>"; };
+		4189B4C86B3AE848C46EE408 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		4495CE5A69000C0B6FFB91D7 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
+		77E3EC88E1AA1E401BDA1038 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		82789E63DD9C2212EC6FC4BF /* Turnstile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Turnstile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D971A63ACE27FDA84E6F92A /* TurnstileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnstileApp.swift; sourceTree = "<group>"; };
+		981E5A49B731707B24DEB37D /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
+		B2324FC24668E90667982E96 /* WorkspaceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceClient.swift; sourceTree = "<group>"; };
+		B448CAD9CA6EAAA6B0D11A1C /* BrowserRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserRepositoryTests.swift; sourceTree = "<group>"; };
+		B721687A736D1CC9145FB5F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B74C4959FDA024F4017B4691 /* BrowserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserRepository.swift; sourceTree = "<group>"; };
+		E2CB0CD69EACB487E039B894 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E57FBEF0335E86EADDFFA53A /* TurnstileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TurnstileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		08583D61DCFF22936AB4B7A4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				82789E63DD9C2212EC6FC4BF /* Turnstile.app */,
+				E57FBEF0335E86EADDFFA53A /* TurnstileTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		17E2E84FAA28396A3B829AB3 /* TurnstileTests */ = {
+			isa = PBXGroup;
+			children = (
+				38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */,
+				981E5A49B731707B24DEB37D /* AppModelTests.swift */,
+				0AA17B8F02D0370E4EF036A6 /* BrowserCollectionTests.swift */,
+				B448CAD9CA6EAAA6B0D11A1C /* BrowserRepositoryTests.swift */,
+				77E3EC88E1AA1E401BDA1038 /* TestSupport.swift */,
+			);
+			name = TurnstileTests;
+			path = Tests/TurnstileTests;
+			sourceTree = "<group>";
+		};
+		1F9C61714870ADE017129FC4 /* Turnstile */ = {
+			isa = PBXGroup;
+			children = (
+				D3E8FBBED6AF37F677B3DD1A /* App */,
+				740817D14787B25013D4A9E7 /* Domain */,
+				E2D8AF4BDF0418CD83896732 /* Model */,
+				2C03D24E3CE89D376944DE22 /* Persistence */,
+				CE67DBD39BC6A880565A735A /* Resources */,
+				369C34A0AB881CE7B91EF8F7 /* System */,
+				8FC1A1E7B73A99BFCCD9085A /* Views */,
+			);
+			name = Turnstile;
+			path = Sources/Turnstile;
+			sourceTree = "<group>";
+		};
+		2C03D24E3CE89D376944DE22 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				B74C4959FDA024F4017B4691 /* BrowserRepository.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		369C34A0AB881CE7B91EF8F7 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				B2324FC24668E90667982E96 /* WorkspaceClient.swift */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		740817D14787B25013D4A9E7 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				4495CE5A69000C0B6FFB91D7 /* Browser.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		81665956A9F718CEA02EA63B = {
+			isa = PBXGroup;
+			children = (
+				1F9C61714870ADE017129FC4 /* Turnstile */,
+				17E2E84FAA28396A3B829AB3 /* TurnstileTests */,
+				08583D61DCFF22936AB4B7A4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8FC1A1E7B73A99BFCCD9085A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2E17FA9AB3BBBDF573FCD6EC /* BrowserSettingsView.swift */,
+				152EA19FB814819AF0F9D756 /* LinkPickerView.swift */,
+				4189B4C86B3AE848C46EE408 /* RootView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CE67DBD39BC6A880565A735A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B721687A736D1CC9145FB5F0 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D3E8FBBED6AF37F677B3DD1A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E2CB0CD69EACB487E039B894 /* AppDelegate.swift */,
+				8D971A63ACE27FDA84E6F92A /* TurnstileApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E2D8AF4BDF0418CD83896732 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2FF31D039FD8DCAC28C42FEE /* AppModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		00C27BF1C58BE3D0B6AF9F72 /* Turnstile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13E2A81CAC50646DC88F1882 /* Build configuration list for PBXNativeTarget "Turnstile" */;
+			buildPhases = (
+				DEEA071E8DF65655B18EF196 /* Sources */,
+				134342F7C4EA088320EB2E2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Turnstile;
+			packageProductDependencies = (
+			);
+			productName = Turnstile;
+			productReference = 82789E63DD9C2212EC6FC4BF /* Turnstile.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8C7A397137B6D4DA04871BA5 /* TurnstileTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1214576A8371386AC88580D7 /* Build configuration list for PBXNativeTarget "TurnstileTests" */;
+			buildPhases = (
+				E933EC79CD77570D656A840E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AE6AE8A945E68225B142E3D7 /* PBXTargetDependency */,
+			);
+			name = TurnstileTests;
+			packageProductDependencies = (
+			);
+			productName = TurnstileTests;
+			productReference = E57FBEF0335E86EADDFFA53A /* TurnstileTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FDFC780AC0A3E850EE0D2AE4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 07BFCC931A797BBA892D1399 /* Build configuration list for PBXProject "Turnstile" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 81665956A9F718CEA02EA63B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 08583D61DCFF22936AB4B7A4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				00C27BF1C58BE3D0B6AF9F72 /* Turnstile */,
+				8C7A397137B6D4DA04871BA5 /* TurnstileTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		134342F7C4EA088320EB2E2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1780AF795849AF5C11D7FD7B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DEEA071E8DF65655B18EF196 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7F78B3A009F114B1266D0A8 /* AppDelegate.swift in Sources */,
+				5DFD73800FF679595728C503 /* AppModel.swift in Sources */,
+				B8BF6506AD0B9BB0DA64BC2E /* Browser.swift in Sources */,
+				62474CE421E1BCEEF1AB1DBE /* BrowserRepository.swift in Sources */,
+				EF09F19A44B8B0DE6B6F1903 /* BrowserSettingsView.swift in Sources */,
+				9A922DB6CA81CCD9100A1595 /* LinkPickerView.swift in Sources */,
+				FA18EF376FD9ECC45D9496F8 /* RootView.swift in Sources */,
+				8A07D6D2B6ECE75641CEA25E /* TurnstileApp.swift in Sources */,
+				8EF6A100632772B47E226786 /* WorkspaceClient.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E933EC79CD77570D656A840E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7791D79D7FDD25E86403E868 /* AppModelTests.swift in Sources */,
+				DCF73A2E331040698FA4FDDA /* ApplicationBundleTests.swift in Sources */,
+				1B040A7B58A13915252D5C94 /* BrowserCollectionTests.swift in Sources */,
+				0744B6069A80F31D193FCB23 /* BrowserRepositoryTests.swift in Sources */,
+				121ECCA1B4E56969F3D89769 /* TestSupport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AE6AE8A945E68225B142E3D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 00C27BF1C58BE3D0B6AF9F72 /* Turnstile */;
+			targetProxy = 50AE48000A730B1074BDF9F4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		205996859A8A1F98B18A12DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jameshiew.turnstile.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Turnstile.app/Contents/MacOS/Turnstile";
+			};
+			name = Release;
+		};
+		258CE80C075399022FA614E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		3F1D0CF9AF46A90417E42809 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jameshiew.turnstile.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Turnstile.app/Contents/MacOS/Turnstile";
+			};
+			name = Debug;
+		};
+		87080D32CB74DEEB2E19C0A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/Turnstile/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jameshiew.turnstile;
+				PRODUCT_NAME = Turnstile;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9557CB23807E943F7AAA0A88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/Turnstile/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jameshiew.turnstile;
+				PRODUCT_NAME = Turnstile;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C5E40173D6F4517B362C0FC8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		07BFCC931A797BBA892D1399 /* Build configuration list for PBXProject "Turnstile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				258CE80C075399022FA614E4 /* Debug */,
+				C5E40173D6F4517B362C0FC8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1214576A8371386AC88580D7 /* Build configuration list for PBXNativeTarget "TurnstileTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3F1D0CF9AF46A90417E42809 /* Debug */,
+				205996859A8A1F98B18A12DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		13E2A81CAC50646DC88F1882 /* Build configuration list for PBXNativeTarget "Turnstile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				87080D32CB74DEEB2E19C0A8 /* Debug */,
+				9557CB23807E943F7AAA0A88 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FDFC780AC0A3E850EE0D2AE4 /* Project object */;
+}
