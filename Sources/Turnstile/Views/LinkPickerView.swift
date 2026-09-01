@@ -197,7 +197,7 @@ struct LinkPickerView: View {
 
   private func hidePicker() {
     NSApplication.shared.windows
-      .first(where: { $0.identifier == PickerWindowPresentation.windowIdentifier })?
+      .first(where: { $0.identifier == PickerWindowPresentation.pickerWindowIdentifier })?
       .orderOut(nil)
   }
 }

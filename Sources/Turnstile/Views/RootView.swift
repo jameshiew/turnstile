@@ -5,104 +5,69 @@ struct RootView: View {
   @Bindable var model: AppModel
 
   var body: some View {
-    Group {
-      if model.hasPendingURLs {
-        LinkPickerView(model: model)
-          .frame(width: pickerSize.width, height: pickerSize.height)
-          .ignoresSafeArea()
-      } else {
-        BrowserSettingsView(model: model)
-          .frame(minWidth: 520, minHeight: 420)
-      }
-    }
-    .alert(
-      model.presentedError?.title ?? "Turnstile",
-      isPresented: Binding(
-        get: { model.presentedError != nil },
-        set: { isPresented in
-          if !isPresented {
-            model.dismissError()
+    BrowserSettingsView(model: model)
+      .frame(minWidth: 520, minHeight: 420)
+      .alert(
+        model.presentedError?.title ?? "Turnstile",
+        isPresented: Binding(
+          get: { model.presentedError != nil && !model.hasPendingURLs },
+          set: { isPresented in
+            if !isPresented {
+              model.dismissError()
+            }
           }
+        ),
+        presenting: model.presentedError
+      ) { _ in
+        Button("OK") {
+          model.dismissError()
         }
-      ),
-      presenting: model.presentedError
-    ) { _ in
-      Button("OK") {
-        model.dismissError()
+      } message: { error in
+        Text(error.message)
       }
-    } message: { error in
-      Text(error.message)
-    }
-    .onAppear {
-      resizeWindow()
-    }
-    .onChange(of: model.hasPendingURLs) {
-      resizeWindow()
-    }
+      .onAppear {
+        configureSettingsWindow()
+      }
   }
 
-  private func resizeWindow() {
+  private func configureSettingsWindow() {
     Task { @MainActor in
       await Task.yield()
       guard
-        let window = NSApplication.shared.keyWindow
-          ?? NSApplication.shared.windows.first(where: \.canBecomeKey)
+        let window = NSApplication.shared.windows.first(where: {
+          $0.identifier == PickerWindowPresentation.settingsWindowIdentifier
+        })
+          ?? NSApplication.shared.windows.first(where: {
+            $0.identifier != PickerWindowPresentation.pickerWindowIdentifier
+              && $0.canBecomeKey
+              && $0.title == "Turnstile"
+          })
       else {
         return
       }
 
-      PickerWindowPresentation.configure(window, asPicker: model.hasPendingURLs)
+      PickerWindowPresentation.configure(window, asPicker: false)
+      if model.hasPendingURLs {
+        window.orderOut(nil)
+        return
+      }
 
-      let contentSize =
-        model.hasPendingURLs
-        ? pickerSize
-        : NSSize(width: 560, height: 450)
+      let contentSize = NSSize(width: 560, height: 450)
       let targetFrame = window.frameRect(
         forContentRect: NSRect(origin: .zero, size: contentSize)
       )
       var frame = window.frame
       frame.size = targetFrame.size
-
-      if model.hasPendingURLs, let placement = preferredPickerPlacement(for: window) {
-        frame.origin = PickerWindowPresentation.anchoredOrigin(
-          windowSize: frame.size,
-          browserCount: model.browsers.browsers.count,
-          placement: placement
-        )
-      } else {
-        frame.origin.y += window.frame.height - frame.height
-      }
-
+      frame.origin.y += window.frame.height - frame.height
       window.setFrame(frame, display: true, animate: false)
     }
   }
-
-  private var pickerSize: NSSize {
-    PickerWindowPresentation.size(browserCount: model.browsers.browsers.count)
-  }
-
-  private func preferredPickerPlacement(for window: NSWindow) -> PickerPlacement? {
-    if let placement = model.preferredPickerPlacement {
-      return placement
-    }
-
-    let mouseLocation = NSEvent.mouseLocation
-    let screen =
-      NSScreen.screens.first {
-        NSMouseInRect(mouseLocation, $0.frame, false)
-      }
-      ?? window.screen
-
-    return screen.map {
-      PickerPlacement(anchor: mouseLocation, visibleScreenFrame: $0.visibleFrame)
-    }
-  }
-
 }
 
 @MainActor
 enum PickerWindowPresentation {
-  static let windowIdentifier = NSUserInterfaceItemIdentifier("TurnstileMainWindow")
+  static let pickerWindowIdentifier = NSUserInterfaceItemIdentifier("TurnstilePickerWindow")
+  static let settingsWindowIdentifier = NSUserInterfaceItemIdentifier("TurnstileSettingsWindow")
   static let outerPadding: CGFloat = 1
   static let contentPadding: CGFloat = 14
   static let browserChoiceWidth: CGFloat = 112
@@ -203,7 +168,7 @@ enum PickerWindowPresentation {
   }
 
   static func configure(_ window: NSWindow, asPicker: Bool) {
-    window.identifier = windowIdentifier
+    window.identifier = asPicker ? pickerWindowIdentifier : settingsWindowIdentifier
     window.isReleasedWhenClosed = false
     window.tabbingMode = .disallowed
 

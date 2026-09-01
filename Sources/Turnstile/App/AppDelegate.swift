@@ -4,6 +4,7 @@ import AppKit
 final class AppDelegate: NSObject, NSApplicationDelegate {
   let model: AppModel
   private var statusItem: NSStatusItem?
+  private lazy var pickerWindowController = PickerWindowController(model: model)
 
   override init() {
     model = AppModel(
@@ -41,14 +42,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       PickerPlacement(anchor: mouseLocation, visibleScreenFrame: $0.visibleFrame)
     }
     model.receive(urls, preferredPickerPlacement: placement)
-    bringWindowForward(in: application)
+    guard model.hasPendingURLs else { return }
+
+    Task { @MainActor in
+      await Task.yield()
+      settingsWindow(in: application)?.orderOut(nil)
+      await Task.yield()
+      pickerWindowController.show(placement: model.preferredPickerPlacement)
+    }
   }
 
   func applicationShouldHandleReopen(
     _ sender: NSApplication,
     hasVisibleWindows flag: Bool
   ) -> Bool {
-    bringWindowForward(in: sender)
+    if model.hasPendingURLs {
+      pickerWindowController.show(placement: model.preferredPickerPlacement)
+    } else {
+      bringSettingsWindowForward(in: sender)
+    }
     return true
   }
 
@@ -93,7 +105,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   @objc private func showSettings() {
-    bringWindowForward(in: NSApplication.shared)
+    pickerWindowController.dismiss()
+    bringSettingsWindowForward(in: NSApplication.shared)
   }
 
   @objc private func showAbout() {
@@ -105,43 +118,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     NSApplication.shared.terminate(nil)
   }
 
-  private func bringWindowForward(in application: NSApplication) {
-    let existingWindow =
-      application.windows.first {
-        $0.identifier == PickerWindowPresentation.windowIdentifier
-      }
-      ?? application.windows.first(where: \.canBecomeKey)
-    if model.hasPendingURLs {
-      existingWindow?.alphaValue = 0
-    }
-
+  private func bringSettingsWindowForward(in application: NSApplication) {
+    let existingWindow = settingsWindow(in: application)
     Task { @MainActor in
       await Task.yield()
       guard
         let window = existingWindow
-          ?? application.windows.first(where: \.canBecomeKey)
+          ?? settingsWindow(in: application)
       else {
         return
       }
 
-      if model.hasPendingURLs, let placement = model.preferredPickerPlacement {
-        PickerWindowPresentation.configure(window, asPicker: true)
-        let contentSize = PickerWindowPresentation.size(
-          browserCount: model.browsers.browsers.count
-        )
-        let frame = PickerWindowPresentation.anchoredFrame(
-          for: window,
-          contentSize: contentSize,
-          browserCount: model.browsers.browsers.count,
-          placement: placement
-        )
-        window.setFrame(frame, display: false)
-        await Task.yield()
-      }
-
-      window.alphaValue = 1
       window.makeKeyAndOrderFront(nil)
       NSRunningApplication.current.activate(options: [.activateAllWindows])
     }
+  }
+
+  private func settingsWindow(in application: NSApplication) -> NSWindow? {
+    application.windows.first {
+      $0.identifier == PickerWindowPresentation.settingsWindowIdentifier
+    }
+      ?? application.windows.first {
+        $0.identifier != PickerWindowPresentation.pickerWindowIdentifier
+          && $0.canBecomeKey
+          && $0.title == "Turnstile"
+      }
   }
 }

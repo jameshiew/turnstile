@@ -75,7 +75,41 @@ struct PickerWindowPresentationTests {
 
     PickerWindowPresentation.configure(window, asPicker: false)
 
-    #expect(window.identifier == PickerWindowPresentation.windowIdentifier)
+    #expect(window.identifier == PickerWindowPresentation.settingsWindowIdentifier)
     #expect(!window.isReleasedWhenClosed)
+  }
+
+  @Test
+  func usesANonactivatingPanelForThePicker() throws {
+    let model = AppModel(
+      repository: InMemoryBrowserRepository(),
+      workspace: WorkspaceClientSpy()
+    )
+    let controller = PickerWindowController(model: model)
+    let panel = try #require(controller.window as? NSPanel)
+
+    #expect(panel.styleMask.contains(.nonactivatingPanel))
+    #expect(panel.canBecomeKey)
+    #expect(!panel.canBecomeMain)
+    #expect(panel.delegate === controller)
+  }
+
+  @Test
+  func dismissesThePickerWhenItLosesKeyStatus() throws {
+    let model = AppModel(
+      repository: InMemoryBrowserRepository(),
+      workspace: WorkspaceClientSpy()
+    )
+    let controller = PickerWindowController(model: model)
+    let window = try #require(controller.window)
+    let url = try #require(URL(string: "https://example.com"))
+    model.receive([url])
+
+    controller.windowDidResignKey(
+      Notification(name: NSWindow.didResignKeyNotification, object: window)
+    )
+
+    #expect(!model.hasPendingURLs)
+    #expect(!window.isVisible)
   }
 }
