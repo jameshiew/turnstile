@@ -23,6 +23,9 @@ run: build
 run-release: build-release
     open .build/DerivedData/Build/Products/Release/Turnstile.app
 
+install: build-release
+    rsync --archive --delete --extended-attributes .build/DerivedData/Build/Products/Release/Turnstile.app/ "$HOME/Applications/Turnstile.app/"
+
 test: generate
     xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Debug -derivedDataPath .build/DerivedData test
 
