@@ -9,6 +9,7 @@ struct BrowserSettingsView: View {
       header
       browserList
       defaultBrowserSection
+      applicationSection
     }
     .padding(24)
     .task {
@@ -140,6 +141,23 @@ struct BrowserSettingsView: View {
         )
       }
       .padding(6)
+    }
+  }
+
+  private var applicationSection: some View {
+    GroupBox {
+      Toggle(
+        "Show Turnstile in the Dock",
+        isOn: Binding(
+          get: { model.settings.showsDockIcon },
+          set: { model.settings.setShowsDockIcon($0) }
+        )
+      )
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(6)
+    } label: {
+      Text("Application")
+        .font(.headline)
     }
   }
 

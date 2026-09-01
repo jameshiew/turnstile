@@ -5,7 +5,7 @@ import SwiftUI
 final class SettingsWindowController: NSWindowController {
   init(model: AppModel) {
     let window = NSWindow(
-      contentRect: NSRect(x: 0, y: 0, width: 560, height: 450),
+      contentRect: NSRect(x: 0, y: 0, width: 560, height: 520),
       styleMask: [.titled, .closable, .miniaturizable, .resizable],
       backing: .buffered,
       defer: false
@@ -13,7 +13,7 @@ final class SettingsWindowController: NSWindowController {
     window.title = "Turnstile"
     window.contentViewController = NSHostingController(rootView: RootView(model: model))
     PickerWindowPresentation.configure(window, asPicker: false)
-    window.setContentSize(NSSize(width: 560, height: 450))
+    window.setContentSize(NSSize(width: 560, height: 520))
     window.center()
 
     super.init(window: window)

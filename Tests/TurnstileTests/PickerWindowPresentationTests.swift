@@ -90,7 +90,7 @@ struct PickerWindowPresentationTests {
 
     #expect(window.identifier == PickerWindowPresentation.settingsWindowIdentifier)
     #expect(window.title == "Turnstile")
-    #expect(window.contentLayoutRect.size == NSSize(width: 560, height: 450))
+    #expect(window.contentLayoutRect.size == NSSize(width: 560, height: 520))
     #expect(!window.isVisible)
   }
 

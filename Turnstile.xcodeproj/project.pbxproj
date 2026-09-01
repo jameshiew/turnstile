@@ -19,8 +19,10 @@
 		8A07D6D2B6ECE75641CEA25E /* TurnstileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D971A63ACE27FDA84E6F92A /* TurnstileApp.swift */; };
 		8EF6A100632772B47E226786 /* WorkspaceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2324FC24668E90667982E96 /* WorkspaceClient.swift */; };
 		9A922DB6CA81CCD9100A1595 /* LinkPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 152EA19FB814819AF0F9D756 /* LinkPickerView.swift */; };
+		ADADA56FC3E6BBA412CBD4A1 /* ApplicationSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655B10E69F884242B8F72F0D /* ApplicationSettingsTests.swift */; };
 		B8BF6506AD0B9BB0DA64BC2E /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4495CE5A69000C0B6FFB91D7 /* Browser.swift */; };
 		C7F78B3A009F114B1266D0A8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CB0CD69EACB487E039B894 /* AppDelegate.swift */; };
+		D2458ACFE2F50CFD5BDCF234 /* ApplicationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F383B1AD4FF899D72CC761 /* ApplicationSettings.swift */; };
 		DCF73A2E331040698FA4FDDA /* ApplicationBundleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */; };
 		EF09F19A44B8B0DE6B6F1903 /* BrowserSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E17FA9AB3BBBDF573FCD6EC /* BrowserSettingsView.swift */; };
 		FA18EF376FD9ECC45D9496F8 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4189B4C86B3AE848C46EE408 /* RootView.swift */; };
@@ -45,6 +47,8 @@
 		38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationBundleTests.swift; sourceTree = "<group>"; };
 		4189B4C86B3AE848C46EE408 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		4495CE5A69000C0B6FFB91D7 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
+		655B10E69F884242B8F72F0D /* ApplicationSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationSettingsTests.swift; sourceTree = "<group>"; };
+		67F383B1AD4FF899D72CC761 /* ApplicationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationSettings.swift; sourceTree = "<group>"; };
 		77E3EC88E1AA1E401BDA1038 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 		82789E63DD9C2212EC6FC4BF /* Turnstile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Turnstile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D971A63ACE27FDA84E6F92A /* TurnstileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnstileApp.swift; sourceTree = "<group>"; };
@@ -72,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				38713BAE1FB91344D40082FD /* ApplicationBundleTests.swift */,
+				655B10E69F884242B8F72F0D /* ApplicationSettingsTests.swift */,
 				981E5A49B731707B24DEB37D /* AppModelTests.swift */,
 				0AA17B8F02D0370E4EF036A6 /* BrowserCollectionTests.swift */,
 				B448CAD9CA6EAAA6B0D11A1C /* BrowserRepositoryTests.swift */,
@@ -161,6 +166,7 @@
 		E2D8AF4BDF0418CD83896732 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				67F383B1AD4FF899D72CC761 /* ApplicationSettings.swift */,
 				2FF31D039FD8DCAC28C42FEE /* AppModel.swift */,
 			);
 			path = Model;
@@ -254,6 +260,7 @@
 			files = (
 				C7F78B3A009F114B1266D0A8 /* AppDelegate.swift in Sources */,
 				5DFD73800FF679595728C503 /* AppModel.swift in Sources */,
+				D2458ACFE2F50CFD5BDCF234 /* ApplicationSettings.swift in Sources */,
 				B8BF6506AD0B9BB0DA64BC2E /* Browser.swift in Sources */,
 				62474CE421E1BCEEF1AB1DBE /* BrowserRepository.swift in Sources */,
 				EF09F19A44B8B0DE6B6F1903 /* BrowserSettingsView.swift in Sources */,
@@ -271,6 +278,7 @@
 			files = (
 				7791D79D7FDD25E86403E868 /* AppModelTests.swift in Sources */,
 				DCF73A2E331040698FA4FDDA /* ApplicationBundleTests.swift in Sources */,
+				ADADA56FC3E6BBA412CBD4A1 /* ApplicationSettingsTests.swift in Sources */,
 				1B040A7B58A13915252D5C94 /* BrowserCollectionTests.swift in Sources */,
 				0744B6069A80F31D193FCB23 /* BrowserRepositoryTests.swift in Sources */,
 				1A71B56A771EE3823DEA4E75 /* PickerWindowPresentationTests.swift in Sources */,

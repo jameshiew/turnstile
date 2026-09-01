@@ -19,6 +19,13 @@ struct ApplicationBundleTests {
   }
 
   @Test
+  func launchesWithoutADockIcon() {
+    let applicationBundle = Bundle(for: AppDelegate.self)
+
+    #expect(applicationBundle.object(forInfoDictionaryKey: "LSUIElement") as? Bool == true)
+  }
+
+  @Test
   func staysRunningAfterItsLastWindowCloses() {
     let delegate = AppDelegate()
 

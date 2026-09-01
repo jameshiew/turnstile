@@ -54,6 +54,7 @@ final class BrowserLibrary {
 @Observable
 final class AppModel {
   let browsers: BrowserLibrary
+  let settings: ApplicationSettings
 
   private(set) var pendingURLs: [URL] = []
   private(set) var preferredPickerPlacement: PickerPlacement?
@@ -67,11 +68,13 @@ final class AppModel {
 
   init(
     repository: any BrowserRepository,
-    workspace: any WorkspaceClient
+    workspace: any WorkspaceClient,
+    settings: ApplicationSettings = ApplicationSettings()
   ) {
     let browsers = BrowserLibrary(repository: repository)
     self.browsers = browsers
     self.workspace = workspace
+    self.settings = settings
     isDefaultBrowser = workspace.isDefaultBrowser()
 
     if let message = browsers.loadErrorMessage {

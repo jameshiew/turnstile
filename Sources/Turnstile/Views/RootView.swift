@@ -6,7 +6,7 @@ struct RootView: View {
 
   var body: some View {
     BrowserSettingsView(model: model)
-      .frame(minWidth: 520, minHeight: 420)
+      .frame(minWidth: 520, minHeight: 490)
       .alert(
         model.presentedError?.title ?? "Turnstile",
         isPresented: Binding(
