@@ -14,16 +14,19 @@ struct AppModelTests {
     let http = try #require(URL(string: "http://example.com/one"))
     let https = try #require(URL(string: "https://example.com/two"))
     let file = URL(filePath: "/tmp/not-a-web-link")
-    let preferredScreenFrame = CGRect(x: 1_920, y: 0, width: 2_560, height: 1_440)
+    let preferredPlacement = PickerPlacement(
+      anchor: CGPoint(x: 3_000, y: 900),
+      visibleScreenFrame: CGRect(x: 1_920, y: 0, width: 2_560, height: 1_440)
+    )
 
-    model.receive([http, file, https], preferredScreenFrame: preferredScreenFrame)
-    #expect(model.preferredPickerScreenFrame == preferredScreenFrame)
+    model.receive([http, file, https], preferredPickerPlacement: preferredPlacement)
+    #expect(model.preferredPickerPlacement == preferredPlacement)
     let didOpen = await model.routePendingURLs(to: browser)
 
     #expect(didOpen)
     #expect(workspace.openedURLs == [http, https])
     #expect(workspace.openedBrowser == browser)
-    #expect(model.preferredPickerScreenFrame == nil)
+    #expect(model.preferredPickerPlacement == nil)
     #expect(!model.hasPendingURLs)
   }
 

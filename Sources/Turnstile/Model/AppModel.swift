@@ -56,7 +56,7 @@ final class AppModel {
   let browsers: BrowserLibrary
 
   private(set) var pendingURLs: [URL] = []
-  private(set) var preferredPickerScreenFrame: NSRect?
+  private(set) var preferredPickerPlacement: PickerPlacement?
   private(set) var isAddingBrowser = false
   private(set) var isRouting = false
   private(set) var isSettingDefaultBrowser = false
@@ -86,12 +86,12 @@ final class AppModel {
     !pendingURLs.isEmpty
   }
 
-  func receive(_ urls: [URL], preferredScreenFrame: NSRect? = nil) {
+  func receive(_ urls: [URL], preferredPickerPlacement: PickerPlacement? = nil) {
     let routableURLs = urls.filter(\.isRoutableWebURL)
     guard !routableURLs.isEmpty else { return }
 
     pendingURLs.append(contentsOf: routableURLs)
-    preferredPickerScreenFrame = preferredScreenFrame
+    self.preferredPickerPlacement = preferredPickerPlacement
   }
 
   func addBrowser() async {
@@ -146,7 +146,7 @@ final class AppModel {
       try await workspace.open(urls, in: browser)
       pendingURLs.removeFirst(min(urls.count, pendingURLs.count))
       if pendingURLs.isEmpty {
-        preferredPickerScreenFrame = nil
+        preferredPickerPlacement = nil
       }
       return true
     } catch {
@@ -158,7 +158,7 @@ final class AppModel {
   func cancelRouting() {
     guard !isRouting else { return }
     pendingURLs.removeAll()
-    preferredPickerScreenFrame = nil
+    preferredPickerPlacement = nil
   }
 
   func setAsDefaultBrowser() async {
@@ -204,6 +204,11 @@ final class AppModel {
   private func present(_ error: any Error, title: String) {
     presentedError = PresentedError(title: title, message: error.localizedDescription)
   }
+}
+
+struct PickerPlacement: Equatable {
+  let anchor: NSPoint
+  let visibleScreenFrame: NSRect
 }
 
 struct PresentedError: Identifiable, Equatable {

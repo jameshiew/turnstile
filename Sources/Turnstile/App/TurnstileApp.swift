@@ -7,6 +7,7 @@ struct TurnstileApp: App {
   var body: some Scene {
     WindowGroup("Turnstile") {
       RootView(model: appDelegate.model)
+        .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
     }
     .defaultSize(width: 560, height: 480)
     .windowResizability(.contentMinSize)

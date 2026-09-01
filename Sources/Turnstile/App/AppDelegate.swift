@@ -14,10 +14,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
   func application(_ application: NSApplication, open urls: [URL]) {
     let mouseLocation = NSEvent.mouseLocation
-    let preferredScreen = NSScreen.screens.first {
-      NSMouseInRect(mouseLocation, $0.frame, false)
+    let preferredScreen =
+      NSScreen.screens.first {
+        NSMouseInRect(mouseLocation, $0.frame, false)
+      }
+      ?? NSScreen.main
+      ?? NSScreen.screens.first
+    let placement = preferredScreen.map {
+      PickerPlacement(anchor: mouseLocation, visibleScreenFrame: $0.visibleFrame)
     }
-    model.receive(urls, preferredScreenFrame: preferredScreen?.visibleFrame)
+    model.receive(urls, preferredPickerPlacement: placement)
     bringWindowForward(in: application)
   }
 
@@ -34,25 +40,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func bringWindowForward(in application: NSApplication) {
+    let existingWindow = application.windows.first(where: \.canBecomeKey)
+    if model.hasPendingURLs {
+      existingWindow?.alphaValue = 0
+    }
+
     Task { @MainActor in
       await Task.yield()
-      guard let window = application.windows.first(where: \.canBecomeKey) else { return }
+      guard
+        let window = existingWindow
+          ?? application.windows.first(where: \.canBecomeKey)
+      else {
+        return
+      }
 
-      if model.hasPendingURLs, let screenFrame = model.preferredPickerScreenFrame {
-        window.orderOut(nil)
+      if model.hasPendingURLs, let placement = model.preferredPickerPlacement {
         PickerWindowPresentation.configure(window, asPicker: true)
         let contentSize = PickerWindowPresentation.size(
           browserCount: model.browsers.browsers.count
         )
-        let frame = PickerWindowPresentation.centeredFrame(
+        let frame = PickerWindowPresentation.anchoredFrame(
           for: window,
           contentSize: contentSize,
-          in: screenFrame
+          placement: placement
         )
         window.setFrame(frame, display: false)
         await Task.yield()
       }
 
+      window.alphaValue = 1
       window.makeKeyAndOrderFront(nil)
       NSRunningApplication.current.activate(options: [.activateAllWindows])
     }
