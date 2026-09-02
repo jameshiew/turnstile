@@ -7,9 +7,9 @@ import Testing
 struct ApplicationBundleTests {
   @Test
   func declaresBothWebURLSchemes() throws {
-    let applicationBundle = Bundle(for: AppDelegate.self)
+    let applicationInfo = try applicationInfo()
     let urlTypes = try #require(
-      applicationBundle.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]]
+      applicationInfo["CFBundleURLTypes"] as? [[String: Any]]
     )
     let schemes = Set(
       urlTypes.flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
@@ -19,10 +19,18 @@ struct ApplicationBundleTests {
   }
 
   @Test
-  func launchesWithoutADockIcon() {
-    let applicationBundle = Bundle(for: AppDelegate.self)
+  func launchesWithoutADockIcon() throws {
+    let applicationInfo = try applicationInfo()
 
-    #expect(applicationBundle.object(forInfoDictionaryKey: "LSUIElement") as? Bool == true)
+    #expect(applicationInfo["LSUIElement"] as? Bool == true)
+  }
+
+  @Test
+  func declaresConcreteBundleIdentity() throws {
+    let applicationInfo = try applicationInfo()
+
+    #expect(applicationInfo["CFBundleExecutable"] as? String == "Turnstile")
+    #expect(applicationInfo["CFBundleIdentifier"] as? String == "com.jameshiew.turnstile")
   }
 
   @Test
@@ -61,5 +69,19 @@ struct ApplicationBundleTests {
 
     #expect(AppDelegate.shouldShowSettingsOnLaunch(defaultLaunch))
     #expect(!AppDelegate.shouldShowSettingsOnLaunch(urlLaunch))
+  }
+
+  private func applicationInfo() throws -> [String: Any] {
+    let packageRoot = URL(filePath: #filePath)
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+      .deletingLastPathComponent()
+    let infoURL =
+      packageRoot
+      .appending(path: "Sources/Turnstile/Resources/ApplicationInfo.plist")
+    let data = try Data(contentsOf: infoURL)
+    let propertyList = try PropertyListSerialization.propertyList(from: data, format: nil)
+
+    return try #require(propertyList as? [String: Any])
   }
 }

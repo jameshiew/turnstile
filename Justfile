@@ -2,31 +2,28 @@ set shell := ["zsh", "-cu"]
 
 default: verify
 
-generate:
-    xcodegen generate
-
 format:
-    xcrun swift format format --in-place --recursive Sources Tests scripts
+    swift format format --in-place --recursive Sources Tests scripts Package.swift
 
 lint:
-    xcrun swift format lint --strict --recursive Sources Tests scripts
+    swift format lint --strict --recursive Sources Tests scripts Package.swift
 
-build: generate
-    xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Debug -derivedDataPath .build/DerivedData build
+build:
+    swift scripts/bundle-app.swift debug
 
-build-release: generate
-    xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Release -derivedDataPath .build/DerivedData build
+build-release:
+    swift scripts/bundle-app.swift release
 
 run: build
-    open .build/DerivedData/Build/Products/Debug/Turnstile.app
+    open .build/apps/debug/Turnstile.app
 
 run-release: build-release
-    open .build/DerivedData/Build/Products/Release/Turnstile.app
+    open .build/apps/release/Turnstile.app
 
 install: build-release
-    rsync --archive --delete --extended-attributes .build/DerivedData/Build/Products/Release/Turnstile.app/ "$HOME/Applications/Turnstile.app/"
+    rsync --archive --delete --extended-attributes .build/apps/release/Turnstile.app/ "$HOME/Applications/Turnstile.app/"
 
-test: generate
-    xcodebuild -project Turnstile.xcodeproj -scheme Turnstile -configuration Debug -derivedDataPath .build/DerivedData test
+test:
+    swift test --enable-code-coverage
 
-verify: lint test
+verify: lint test build
