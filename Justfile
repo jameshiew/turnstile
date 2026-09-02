@@ -14,6 +14,9 @@ build:
 build-release:
     swift scripts/bundle-app.swift release
 
+clean:
+    swift package reset
+
 run: build
     open .build/apps/debug/Turnstile.app
 
