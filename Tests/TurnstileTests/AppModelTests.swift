@@ -48,6 +48,20 @@ struct AppModelTests {
   }
 
   @Test
+  func defaultsToFirstAvailableBrowser() {
+    let unavailableBrowser = makeBrowser(name: "Missing")
+    let availableBrowser = makeBrowser(name: "Safari")
+    let repository = InMemoryBrowserRepository(
+      browsers: [unavailableBrowser, availableBrowser]
+    )
+    let workspace = WorkspaceClientSpy()
+    workspace.availableBrowserIDs = [availableBrowser.id]
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    #expect(model.defaultBrowser == availableBrowser)
+  }
+
+  @Test
   func addsTheExplicitlySelectedBrowser() async {
     let repository = InMemoryBrowserRepository()
     let workspace = WorkspaceClientSpy()

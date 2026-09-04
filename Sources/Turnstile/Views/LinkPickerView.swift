@@ -30,12 +30,12 @@ struct LinkPickerView: View {
     }
     .padding(PickerWindowPresentation.outerPadding)
     .onKeyPress(.return) {
-      guard let firstBrowser = model.browsers.browsers.first,
+      guard let defaultBrowser = model.defaultBrowser,
         !model.isRouting
       else {
         return .ignored
       }
-      route(to: firstBrowser)
+      route(to: defaultBrowser)
       return .handled
     }
   }
@@ -89,7 +89,9 @@ struct LinkPickerView: View {
   }
 
   private var browserChoices: some View {
-    ScrollView(.horizontal) {
+    let defaultBrowserID = model.defaultBrowser?.id
+
+    return ScrollView(.horizontal) {
       LazyHStack(spacing: PickerWindowPresentation.browserChoiceSpacing) {
         ForEach(Array(model.browsers.browsers.enumerated()), id: \.element.id) { entry in
           let index = entry.offset
@@ -105,7 +107,7 @@ struct LinkPickerView: View {
               shortcut: index < 9 ? index + 1 : nil,
               isAvailable: isAvailable,
               isHighlighted: hoveredBrowserID == browser.id
-                || (hoveredBrowserID == nil && index == 0)
+                || (hoveredBrowserID == nil && browser.id == defaultBrowserID)
             )
           }
           .buttonStyle(.plain)
@@ -159,8 +161,8 @@ struct LinkPickerView: View {
 
   private var keyboardHint: some View {
     Group {
-      if let firstBrowser = model.browsers.browsers.first {
-        Text("Return: \(firstBrowser.displayName)  •  Numbers: choose  •  Esc: close")
+      if let defaultBrowser = model.defaultBrowser {
+        Text("Return: \(defaultBrowser.displayName)  •  Numbers: choose  •  Esc: close")
       } else {
         Text("Esc: close")
       }

@@ -89,6 +89,10 @@ final class AppModel {
     !pendingURLs.isEmpty
   }
 
+  var defaultBrowser: Browser? {
+    browsers.browsers.first(where: isAvailable)
+  }
+
   func receive(_ urls: [URL], preferredPickerPlacement: PickerPlacement? = nil) {
     let routableURLs = urls.filter(\.isRoutableWebURL)
     guard !routableURLs.isEmpty else { return }
