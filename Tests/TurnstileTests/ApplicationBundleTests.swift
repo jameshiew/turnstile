@@ -19,6 +19,20 @@ struct ApplicationBundleTests {
   }
 
   @Test
+  func declaresHTMLDocumentsForOpeningFromFinderAndCLI() throws {
+    let applicationInfo = try applicationInfo()
+    let documentTypes = try #require(applicationInfo["CFBundleDocumentTypes"] as? [[String: Any]])
+    let htmlType = try #require(
+      documentTypes.first {
+        ($0["LSItemContentTypes"] as? [String])?.contains("public.html") == true
+      }
+    )
+
+    #expect(htmlType["CFBundleTypeRole"] as? String == "Viewer")
+    #expect(htmlType["LSHandlerRank"] as? String == "Alternate")
+  }
+
+  @Test
   func launchesWithoutADockIcon() throws {
     let applicationInfo = try applicationInfo()
 

@@ -104,7 +104,7 @@ final class SystemWorkspaceClient: WorkspaceClient {
   }
 
   func open(_ urls: [URL], in browser: Browser) async throws {
-    guard !urls.isEmpty, urls.allSatisfy(\.isWebURL) else {
+    guard !urls.isEmpty, urls.allSatisfy(\.isRoutableBrowserURL) else {
       throw WorkspaceClientError.invalidURL
     }
     guard let applicationURL = resolvedApplicationURL(for: browser) else {
@@ -138,10 +138,14 @@ final class SystemWorkspaceClient: WorkspaceClient {
       at: bundle.bundleURL,
       toOpenURLsWithScheme: "https"
     )
+    try await workspace.setDefaultApplication(at: bundle.bundleURL, toOpen: .html)
   }
 
   func isDefaultBrowser() -> Bool {
-    guard let ownIdentifier = bundle.bundleIdentifier else { return false }
+    guard let ownIdentifier = bundle.bundleIdentifier,
+      let htmlHandlerURL = workspace.urlForApplication(toOpen: UTType.html),
+      Bundle(url: htmlHandlerURL)?.bundleIdentifier == ownIdentifier
+    else { return false }
 
     return ["http://example.com", "https://example.com"].allSatisfy { value in
       guard let url = URL(string: value),
@@ -190,7 +194,8 @@ final class SystemWorkspaceClient: WorkspaceClient {
 }
 
 extension URL {
-  fileprivate var isWebURL: Bool {
+  var isRoutableBrowserURL: Bool {
+    if isFileURL { return true }
     guard let scheme = scheme?.lowercased() else { return false }
     return scheme == "http" || scheme == "https"
   }
@@ -213,7 +218,7 @@ enum WorkspaceClientError: LocalizedError, Equatable {
     case .invalidApplication:
       "The selected item is not a valid macOS application."
     case .invalidURL:
-      "Turnstile can only route HTTP and HTTPS links."
+      "Turnstile can only route HTTP and HTTPS links and local files."
     case .notAWebBrowser:
       "The selected application does not handle both HTTP and HTTPS links."
     case .notRunningAsApplication:

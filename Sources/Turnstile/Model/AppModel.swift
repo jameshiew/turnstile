@@ -94,7 +94,7 @@ final class AppModel {
   }
 
   func receive(_ urls: [URL], preferredPickerPlacement: PickerPlacement? = nil) {
-    let routableURLs = urls.filter(\.isRoutableWebURL)
+    let routableURLs = urls.filter(\.isRoutableBrowserURL)
     guard !routableURLs.isEmpty else { return }
 
     pendingURLs.append(contentsOf: routableURLs)
@@ -222,11 +222,4 @@ struct PresentedError: Identifiable, Equatable {
   let id = UUID()
   let title: String
   let message: String
-}
-
-extension URL {
-  fileprivate var isRoutableWebURL: Bool {
-    guard let scheme = scheme?.lowercased() else { return false }
-    return scheme == "http" || scheme == "https"
-  }
 }

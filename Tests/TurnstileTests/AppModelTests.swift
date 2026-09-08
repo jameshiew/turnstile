@@ -6,38 +6,58 @@ import Testing
 @MainActor
 struct AppModelTests {
   @Test
-  func receivesOnlyWebLinksAndRoutesThemTogether() async throws {
+  func receivesWebLinksAndFilesAndRoutesThemTogether() async throws {
     let browser = makeBrowser(name: "Safari")
     let repository = InMemoryBrowserRepository(browsers: [browser])
     let workspace = WorkspaceClientSpy()
     let model = AppModel(repository: repository, workspace: workspace)
     let http = try #require(URL(string: "http://example.com/one"))
     let https = try #require(URL(string: "https://example.com/two"))
-    let file = URL(filePath: "/tmp/not-a-web-link")
+    let file = URL(filePath: "/tmp/local page #1 %.html")
+    let unsupported = try #require(URL(string: "mailto:someone@example.com"))
     let preferredPlacement = PickerPlacement(
       anchor: CGPoint(x: 3_000, y: 900),
       visibleScreenFrame: CGRect(x: 1_920, y: 0, width: 2_560, height: 1_440)
     )
 
-    model.receive([http, file, https], preferredPickerPlacement: preferredPlacement)
+    model.receive([http, file, unsupported, https], preferredPickerPlacement: preferredPlacement)
     #expect(model.preferredPickerPlacement == preferredPlacement)
     let didOpen = await model.routePendingURLs(to: browser)
 
     #expect(didOpen)
-    #expect(workspace.openedURLs == [http, https])
+    #expect(workspace.openedURLs == [http, file, https])
     #expect(workspace.openedBrowser == browser)
     #expect(model.preferredPickerPlacement == nil)
     #expect(!model.hasPendingURLs)
   }
 
   @Test
-  func keepsLinksPendingWhenTheBrowserFailsToOpen() async throws {
+  func receivesLocalHTMLFilesWithoutAWebLink() async {
+    let browser = makeBrowser(name: "Safari")
+    let workspace = WorkspaceClientSpy()
+    let model = AppModel(
+      repository: InMemoryBrowserRepository(browsers: [browser]),
+      workspace: workspace
+    )
+    let files = [URL(filePath: "/tmp/some.html"), URL(filePath: "/tmp/another page.htm")]
+
+    model.receive(files)
+
+    #expect(model.hasPendingURLs)
+    #expect(model.pendingURLs == files)
+    #expect(await model.routePendingURLs(to: browser))
+    #expect(workspace.openedURLs == files)
+    #expect(!model.hasPendingURLs)
+  }
+
+  @Test(arguments: ["https://example.com", "file:///tmp/local%20page.html"])
+  func keepsLinksPendingWhenTheBrowserFailsToOpen(value: String) async throws {
     let browser = makeBrowser(name: "Safari")
     let repository = InMemoryBrowserRepository(browsers: [browser])
     let workspace = WorkspaceClientSpy()
     workspace.openError = TestFailure.expected
     let model = AppModel(repository: repository, workspace: workspace)
-    let url = try #require(URL(string: "https://example.com"))
+    let url = try #require(URL(string: value))
 
     model.receive([url])
     let didOpen = await model.routePendingURLs(to: browser)

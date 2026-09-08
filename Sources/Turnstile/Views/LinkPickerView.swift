@@ -181,6 +181,7 @@ struct LinkPickerView: View {
 
   private var title: String {
     guard let url = model.pendingURLs.first else { return "Open Link" }
+    if url.isFileURL { return url.lastPathComponent }
     return url.host ?? "Open Link"
   }
 
