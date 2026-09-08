@@ -12,6 +12,7 @@ struct BrowserSettingsView: View {
       applicationSection
     }
     .padding(24)
+    .browserAdditionSheet(model: model, presentation: .settings)
     .task {
       model.refreshDefaultBrowserStatus()
     }
@@ -63,7 +64,7 @@ struct BrowserSettingsView: View {
           Button {
             Task { await model.addBrowser() }
           } label: {
-            Label("Add Browser", systemImage: "plus")
+            Label("Add Browser…", systemImage: "plus")
           }
           .disabled(model.isAddingBrowser)
 
@@ -98,7 +99,7 @@ struct BrowserSettingsView: View {
         }
 
         Text(
-          "The order here is the order shown when a link arrives. Drag rows or use the arrow buttons."
+          "Add Chrome to choose individual profiles. Drag rows or use the arrow buttons to set the order shown when a link arrives."
         )
         .font(.caption)
         .foregroundStyle(.secondary)
@@ -180,9 +181,9 @@ private struct BrowserRow: View {
         .frame(width: 28, height: 28)
 
       VStack(alignment: .leading, spacing: 1) {
-        Text(browser.displayName)
+        Text(browser.destinationName)
           .lineLimit(1)
-        Text(browser.bundleIdentifier)
+        Text(browser.profile?.directory ?? browser.bundleIdentifier)
           .font(.caption)
           .foregroundStyle(.secondary)
           .lineLimit(1)

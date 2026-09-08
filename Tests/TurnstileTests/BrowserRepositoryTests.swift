@@ -24,6 +24,40 @@ struct BrowserRepositoryTests {
   }
 
   @Test
+  func loadsExistingBrowserEntriesWithoutProfileFields() throws {
+    let context = makeRepository()
+    defer { context.defaults.removePersistentDomain(forName: context.suiteName) }
+    context.defaults.set(
+      Data(
+        #"{"version":1,"browsers":[{"bundleIdentifier":"com.google.Chrome","displayName":"Chrome","applicationURL":"file:///Applications/Chrome.app"}]}"#
+          .utf8
+      ),
+      forKey: "test-browser-library"
+    )
+
+    let browsers = try context.repository.load()
+
+    #expect(browsers == [makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")])
+    #expect(browsers.first?.id == "com.google.chrome")
+  }
+
+  @Test
+  func roundTripsChromeWithMultipleProfiles() throws {
+    let context = makeRepository()
+    defer { context.defaults.removePersistentDomain(forName: context.suiteName) }
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let browsers = [
+      chrome.withProfile(ChromeProfile(directory: "Profile 1", name: "Work")),
+      chrome,
+      chrome.withProfile(ChromeProfile(directory: "Default", name: "Personal")),
+    ]
+
+    try context.repository.save(browsers)
+
+    #expect(try context.repository.load() == browsers)
+  }
+
+  @Test
   func rejectsAnUnknownPayloadVersion() throws {
     let context = makeRepository()
     defer { context.defaults.removePersistentDomain(forName: context.suiteName) }

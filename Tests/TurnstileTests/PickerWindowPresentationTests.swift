@@ -110,6 +110,27 @@ struct PickerWindowPresentationTests {
   }
 
   @Test
+  func keepsLinksPendingWhileChoosingChromeProfiles() async throws {
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let workspace = WorkspaceClientSpy()
+    workspace.chosenApplicationURL = chrome.applicationURL
+    workspace.inspectedBrowser = chrome
+    let model = AppModel(repository: InMemoryBrowserRepository(), workspace: workspace)
+    let controller = PickerWindowController(model: model)
+    let window = try #require(controller.window)
+    let url = try #require(URL(string: "https://example.com"))
+    model.receive([url])
+    await model.addBrowser(presentation: .picker)
+
+    controller.windowDidResignKey(
+      Notification(name: NSWindow.didResignKeyNotification, object: window)
+    )
+
+    #expect(model.pendingURLs == [url])
+    #expect(model.browserAddition?.presentation == .picker)
+  }
+
+  @Test
   func dismissesThePickerWhenItLosesKeyStatus() throws {
     let model = AppModel(
       repository: InMemoryBrowserRepository(),

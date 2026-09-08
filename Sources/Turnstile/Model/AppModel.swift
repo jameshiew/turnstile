@@ -25,6 +25,14 @@ final class BrowserLibrary {
     try update { try $0.add(browser) }
   }
 
+  func add(_ browsers: [Browser]) throws {
+    try update { collection in
+      for browser in browsers {
+        try collection.add(browser)
+      }
+    }
+  }
+
   func remove(id: Browser.ID) throws {
     try update { $0.remove(id: id) }
   }
@@ -59,6 +67,8 @@ final class AppModel {
   private(set) var pendingURLs: [URL] = []
   private(set) var preferredPickerPlacement: PickerPlacement?
   private(set) var isAddingBrowser = false
+  private(set) var browserAddition: BrowserAddition?
+  private(set) var browserAdditionError: String?
   private(set) var isRouting = false
   private(set) var isSettingDefaultBrowser = false
   private(set) var isDefaultBrowser: Bool
@@ -101,18 +111,54 @@ final class AppModel {
     self.preferredPickerPlacement = preferredPickerPlacement
   }
 
-  func addBrowser() async {
-    guard !isAddingBrowser else { return }
+  func addBrowser(presentation: BrowserAddition.Presentation = .settings) async {
+    guard !isAddingBrowser, browserAddition == nil else { return }
     isAddingBrowser = true
     defer { isAddingBrowser = false }
 
     guard let applicationURL = await workspace.chooseBrowser() else { return }
 
     do {
-      try browsers.add(workspace.browser(at: applicationURL))
+      let browser = try workspace.browser(at: applicationURL)
+      if browser.chromeDataDirectoryName != nil {
+        var profiles: [Browser] = []
+        var message: String?
+        do {
+          profiles = try workspace.profiles(for: browser)
+          if profiles.isEmpty {
+            message =
+              "No profiles found. Open \(browser.displayName) and create a profile, then add it here."
+          }
+        } catch {
+          message = "Profiles could not be loaded. \(error.localizedDescription)"
+        }
+        browserAdditionError = nil
+        browserAddition = BrowserAddition(
+          browser: browser, profiles: profiles, message: message, presentation: presentation
+        )
+      } else {
+        try browsers.add(browser)
+      }
     } catch {
       present(error, title: "Browser Could Not Be Added")
     }
+  }
+
+  func addSelectedBrowsers(ids: Set<Browser.ID>) {
+    guard let browserAddition else { return }
+    let selected = browserAddition.choices.filter { ids.contains($0.id) }
+    guard !selected.isEmpty else { return }
+    do {
+      try browsers.add(selected)
+      dismissBrowserAddition()
+    } catch {
+      browserAdditionError = error.localizedDescription
+    }
+  }
+
+  func dismissBrowserAddition() {
+    browserAddition = nil
+    browserAdditionError = nil
   }
 
   func removeBrowser(id: Browser.ID) {
@@ -222,4 +268,19 @@ struct PresentedError: Identifiable, Equatable {
   let id = UUID()
   let title: String
   let message: String
+}
+
+struct BrowserAddition: Identifiable {
+  enum Presentation {
+    case settings
+    case picker
+  }
+
+  let id = UUID()
+  let browser: Browser
+  let profiles: [Browser]
+  let message: String?
+  let presentation: Presentation
+
+  var choices: [Browser] { [browser] + profiles }
 }

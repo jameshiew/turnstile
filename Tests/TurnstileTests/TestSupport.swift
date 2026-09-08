@@ -47,6 +47,8 @@ final class InMemoryBrowserRepository: BrowserRepository {
 final class WorkspaceClientSpy: WorkspaceClient {
   var chosenApplicationURL: URL?
   var inspectedBrowser = makeBrowser(name: "Selected")
+  var discoveredProfiles: [Browser] = []
+  var profileError: (any Error)?
   var openedURLs: [URL] = []
   var openedBrowser: Browser?
   var openError: (any Error)?
@@ -61,6 +63,11 @@ final class WorkspaceClientSpy: WorkspaceClient {
 
   func browser(at applicationURL: URL) throws -> Browser {
     inspectedBrowser
+  }
+
+  func profiles(for browser: Browser) throws -> [Browser] {
+    if let profileError { throw profileError }
+    return discoveredProfiles
   }
 
   func icon(for browser: Browser) -> NSImage {

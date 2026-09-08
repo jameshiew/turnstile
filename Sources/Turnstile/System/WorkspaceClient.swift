@@ -5,6 +5,7 @@ import UniformTypeIdentifiers
 protocol WorkspaceClient: AnyObject {
   func chooseBrowser() async -> URL?
   func browser(at applicationURL: URL) throws -> Browser
+  func profiles(for browser: Browser) throws -> [Browser]
   func icon(for browser: Browser) -> NSImage
   func isAvailable(_ browser: Browser) -> Bool
   func open(_ urls: [URL], in browser: Browser) async throws
@@ -17,15 +18,18 @@ final class SystemWorkspaceClient: WorkspaceClient {
   private let workspace: NSWorkspace
   private let fileManager: FileManager
   private let bundle: Bundle
+  private let profileStore: ChromeProfileStore
 
   init(
     workspace: NSWorkspace = .shared,
     fileManager: FileManager = .default,
-    bundle: Bundle = .main
+    bundle: Bundle = .main,
+    profileStore: ChromeProfileStore = ChromeProfileStore()
   ) {
     self.workspace = workspace
     self.fileManager = fileManager
     self.bundle = bundle
+    self.profileStore = profileStore
   }
 
   func chooseBrowser() async -> URL? {
@@ -99,8 +103,12 @@ final class SystemWorkspaceClient: WorkspaceClient {
     return image.copy() as? NSImage ?? image
   }
 
+  func profiles(for browser: Browser) throws -> [Browser] {
+    try profileStore.profiles(for: browser)
+  }
+
   func isAvailable(_ browser: Browser) -> Bool {
-    resolvedApplicationURL(for: browser) != nil
+    resolvedApplicationURL(for: browser) != nil && profileStore.isAvailable(browser)
   }
 
   func open(_ urls: [URL], in browser: Browser) async throws {
@@ -113,16 +121,38 @@ final class SystemWorkspaceClient: WorkspaceClient {
     guard Bundle(url: applicationURL)?.bundleIdentifier != bundle.bundleIdentifier else {
       throw WorkspaceClientError.cannotAddTurnstile
     }
+    guard profileStore.isAvailable(browser) else {
+      throw WorkspaceClientError.profileNotFound(browser.destinationName)
+    }
 
-    let configuration = NSWorkspace.OpenConfiguration()
-    configuration.activates = true
-    configuration.addsToRecentItems = false
+    let configuration = openConfiguration(for: browser, urls: urls)
+
+    if browser.profile != nil {
+      _ = try await workspace.openApplication(at: applicationURL, configuration: configuration)
+      return
+    }
 
     _ = try await workspace.open(
       urls,
       withApplicationAt: applicationURL,
       configuration: configuration
     )
+  }
+
+  func openConfiguration(for browser: Browser, urls: [URL]) -> NSWorkspace.OpenConfiguration {
+    let configuration = NSWorkspace.OpenConfiguration()
+    configuration.activates = true
+    configuration.addsToRecentItems = false
+    if let profile = browser.profile, let dataURL = profileStore.dataDirectory(for: browser) {
+      configuration.createsNewApplicationInstance = true
+      configuration.arguments =
+        [
+          "--user-data-dir=\(dataURL.path)",
+          "--profile-directory=\(profile.directory)",
+        ]
+        + urls.map(\.absoluteString)
+    }
+    return configuration
   }
 
   func makeDefaultBrowser() async throws {
@@ -208,6 +238,7 @@ enum WorkspaceClientError: LocalizedError, Equatable {
   case invalidURL
   case notAWebBrowser
   case notRunningAsApplication
+  case profileNotFound(String)
 
   var errorDescription: String? {
     switch self {
@@ -223,6 +254,8 @@ enum WorkspaceClientError: LocalizedError, Equatable {
       "The selected application does not handle both HTTP and HTTPS links."
     case .notRunningAsApplication:
       "Turnstile must be run from its app bundle before it can become the default browser."
+    case .profileNotFound(let name):
+      "The profile for \(name) could not be found. Remove it and add it again."
     }
   }
 }

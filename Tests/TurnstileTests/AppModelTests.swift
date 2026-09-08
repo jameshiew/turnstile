@@ -95,6 +95,93 @@ struct AppModelTests {
   }
 
   @Test
+  func offersChromeProfilesEvenWhenChromeIsAlreadyAdded() async throws {
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let personal = chrome.withProfile(ChromeProfile(directory: "Default", name: "Personal"))
+    let work = chrome.withProfile(ChromeProfile(directory: "Profile 1", name: "Work"))
+    let repository = InMemoryBrowserRepository(browsers: [chrome])
+    let workspace = WorkspaceClientSpy()
+    workspace.chosenApplicationURL = chrome.applicationURL
+    workspace.inspectedBrowser = chrome
+    workspace.discoveredProfiles = [personal, work]
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.addBrowser()
+
+    #expect(model.browserAddition?.choices == [chrome, personal, work])
+    #expect(repository.storedBrowsers == [chrome])
+    model.addSelectedBrowsers(ids: [personal.id, work.id])
+    #expect(repository.storedBrowsers == [chrome, personal, work])
+    #expect(model.browserAddition == nil)
+
+    let url = try #require(URL(string: "https://example.com/work"))
+    model.receive([url])
+    #expect(await model.routePendingURLs(to: work))
+    #expect(workspace.openedBrowser?.profile?.directory == "Profile 1")
+  }
+
+  @Test
+  func cancellingChromeProfileSelectionDoesNotChangeTheLibrary() async {
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let repository = InMemoryBrowserRepository()
+    let workspace = WorkspaceClientSpy()
+    workspace.chosenApplicationURL = chrome.applicationURL
+    workspace.inspectedBrowser = chrome
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.addBrowser()
+    #expect(model.browserAddition != nil)
+    model.dismissBrowserAddition()
+
+    #expect(repository.storedBrowsers.isEmpty)
+    #expect(model.browserAddition == nil)
+  }
+
+  @Test
+  func allowsAddingChromeWhenItsProfilesCannotBeRead() async {
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let repository = InMemoryBrowserRepository()
+    let workspace = WorkspaceClientSpy()
+    workspace.chosenApplicationURL = chrome.applicationURL
+    workspace.inspectedBrowser = chrome
+    workspace.profileError = TestFailure.expected
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.addBrowser()
+
+    #expect(model.browserAddition?.message != nil)
+    #expect(model.browserAddition?.choices == [chrome])
+    model.addSelectedBrowsers(ids: [chrome.id])
+    #expect(repository.storedBrowsers == [chrome])
+  }
+
+  @Test
+  func keepsProfileSelectionForRetryIfSavingFails() async {
+    let chrome = makeBrowser(name: "Chrome", bundleIdentifier: "com.google.Chrome")
+    let work = chrome.withProfile(ChromeProfile(directory: "Profile 1", name: "Work"))
+    let repository = InMemoryBrowserRepository()
+    repository.saveError = TestFailure.expected
+    let workspace = WorkspaceClientSpy()
+    workspace.chosenApplicationURL = chrome.applicationURL
+    workspace.inspectedBrowser = chrome
+    workspace.discoveredProfiles = [work]
+    let model = AppModel(repository: repository, workspace: workspace)
+
+    await model.addBrowser()
+    model.addSelectedBrowsers(ids: [chrome.id, work.id])
+
+    #expect(repository.storedBrowsers.isEmpty)
+    #expect(model.browsers.browsers.isEmpty)
+    #expect(model.browserAddition != nil)
+    #expect(model.browserAdditionError != nil)
+
+    repository.saveError = nil
+    model.addSelectedBrowsers(ids: [chrome.id, work.id])
+    #expect(repository.storedBrowsers == [chrome, work])
+    #expect(model.browserAddition == nil)
+  }
+
+  @Test
   func doesNotPublishAChangeThatCouldNotBePersisted() {
     let safari = makeBrowser(name: "Safari")
     let repository = InMemoryBrowserRepository(browsers: [safari])

@@ -29,6 +29,7 @@ struct LinkPickerView: View {
         .stroke(.separator.opacity(0.7), lineWidth: 0.5)
     }
     .padding(PickerWindowPresentation.outerPadding)
+    .browserAdditionSheet(model: model, presentation: .picker)
     .onKeyPress(.return) {
       guard let defaultBrowser = model.defaultBrowser,
         !model.isRouting
@@ -117,7 +118,8 @@ struct LinkPickerView: View {
           .onHover { isHovering in
             hoveredBrowserID = isHovering ? browser.id : nil
           }
-          .accessibilityLabel("Open in \(browser.displayName)")
+          .accessibilityLabel("Open in \(browser.destinationName)")
+          .help(browser.destinationName + (browser.profile.map { " (\($0.directory))" } ?? ""))
         }
       }
       .frame(minWidth: minimumChoiceRowWidth)
@@ -148,7 +150,7 @@ struct LinkPickerView: View {
       Spacer()
 
       Button("Add Browser…") {
-        Task { await model.addBrowser() }
+        Task { await model.addBrowser(presentation: .picker) }
       }
       .controlSize(.small)
       .disabled(model.isAddingBrowser)
@@ -162,7 +164,7 @@ struct LinkPickerView: View {
   private var keyboardHint: some View {
     Group {
       if let defaultBrowser = model.defaultBrowser {
-        Text("Return: \(defaultBrowser.displayName)  •  Numbers: choose  •  Esc: close")
+        Text("Return: \(defaultBrowser.destinationName)  •  Numbers: choose  •  Esc: close")
       } else {
         Text("Esc: close")
       }
@@ -224,7 +226,7 @@ private struct BrowserChoice: View {
         )
         .shadow(color: .black.opacity(0.12), radius: 2, y: 1)
 
-      Text(browser.displayName)
+      Text(browser.profile?.name ?? browser.displayName)
         .font(.caption)
         .lineLimit(1)
         .truncationMode(.tail)

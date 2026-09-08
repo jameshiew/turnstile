@@ -82,7 +82,9 @@ final class PickerWindowController: NSWindowController, NSWindowDelegate {
   }
 
   func windowDidResignKey(_ notification: Notification) {
-    guard model.hasPendingURLs, !model.isRouting else { return }
+    guard model.hasPendingURLs, !model.isRouting, !model.isAddingBrowser,
+      model.browserAddition == nil
+    else { return }
     dismiss()
   }
 

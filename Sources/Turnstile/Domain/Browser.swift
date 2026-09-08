@@ -4,9 +4,62 @@ struct Browser: Codable, Hashable, Identifiable, Sendable {
   let bundleIdentifier: String
   let displayName: String
   let applicationURL: URL
+  let profile: ChromeProfile?
+
+  init(
+    bundleIdentifier: String,
+    displayName: String,
+    applicationURL: URL,
+    profile: ChromeProfile? = nil
+  ) {
+    self.bundleIdentifier = bundleIdentifier
+    self.displayName = displayName
+    self.applicationURL = applicationURL
+    self.profile = profile
+  }
 
   var id: String {
-    bundleIdentifier.lowercased()
+    bundleIdentifier.lowercased() + (profile.map { "#\($0.directory)" } ?? "")
+  }
+
+  var destinationName: String {
+    profile.map { "\(displayName) – \($0.name)" } ?? displayName
+  }
+
+  var chromeDataDirectoryName: String? {
+    switch bundleIdentifier.lowercased() {
+    case "com.google.chrome": "Chrome"
+    case "com.google.chrome.beta": "Chrome Beta"
+    case "com.google.chrome.dev": "Chrome Dev"
+    case "com.google.chrome.canary": "Chrome Canary"
+    case "com.google.chrome.for.testing": "Chrome for Testing"
+    default: nil
+    }
+  }
+
+  var isValid: Bool {
+    !bundleIdentifier.isEmpty && !displayName.isEmpty
+      && (profile == nil || (chromeDataDirectoryName != nil && profile?.isValid == true))
+  }
+
+  func withProfile(_ profile: ChromeProfile) -> Browser {
+    Browser(
+      bundleIdentifier: bundleIdentifier,
+      displayName: displayName,
+      applicationURL: applicationURL,
+      profile: profile
+    )
+  }
+}
+
+struct ChromeProfile: Codable, Hashable, Sendable {
+  let directory: String
+  let name: String
+
+  var isValid: Bool {
+    !name.isEmpty && !directory.isEmpty
+      && ![".", "..", "Guest Profile", "System Profile"].contains(directory)
+      && !directory.contains("/") && !directory.contains("\\") && !directory.contains("\0")
   }
 }
 
@@ -22,11 +75,11 @@ struct BrowserCollection: Equatable, Sendable {
     var identifiers = Set<String>()
 
     for browser in elements {
-      guard !browser.bundleIdentifier.isEmpty, !browser.displayName.isEmpty else {
+      guard browser.isValid else {
         throw BrowserCollectionError.invalidBrowser
       }
       guard identifiers.insert(browser.id).inserted else {
-        throw BrowserCollectionError.duplicateBrowser(browser.displayName)
+        throw BrowserCollectionError.duplicateBrowser(browser.destinationName)
       }
     }
 
@@ -34,8 +87,11 @@ struct BrowserCollection: Equatable, Sendable {
   }
 
   mutating func add(_ browser: Browser) throws {
+    guard browser.isValid else {
+      throw BrowserCollectionError.invalidBrowser
+    }
     guard !elements.contains(where: { $0.id == browser.id }) else {
-      throw BrowserCollectionError.duplicateBrowser(browser.displayName)
+      throw BrowserCollectionError.duplicateBrowser(browser.destinationName)
     }
     elements.append(browser)
   }
