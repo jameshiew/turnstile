@@ -44,7 +44,7 @@ struct ApplicationBundleTests {
     let applicationInfo = try applicationInfo()
 
     #expect(applicationInfo["CFBundleExecutable"] as? String == "Turnstile")
-    #expect(applicationInfo["CFBundleIdentifier"] as? String == "com.jameshiew.turnstile")
+    #expect(applicationInfo["CFBundleIdentifier"] as? String == "net.hiew.turnstile")
   }
 
   @Test
